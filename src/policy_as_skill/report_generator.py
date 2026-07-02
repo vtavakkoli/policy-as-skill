@@ -235,7 +235,7 @@ def generate_report(result_dir: Path, metrics: list[dict], traces: list[dict], f
     ]
     agg = _group_stats(metrics, "method", cols)
     ex = _example_trace(traces)
-    artifact_links = ["metrics.csv", "metrics.json", "traces.jsonl", "failures.json", "manifest.json", "benchmark_generated.jsonl"]
+    artifact_links = ["metrics.csv", "metrics.json", "traces.jsonl", "failures.json", "manifest.json"]
     link_html = "".join(f"<a class='pill' href='{html.escape(x)}'>{html.escape(x)}</a>" for x in artifact_links)
 
     worst_rows = sorted(metrics, key=lambda r: float(r["overall_score"]))[:12]
@@ -332,7 +332,7 @@ pre {{ background:#0f172a; color:#e2e8f0; padding:18px; border-radius:18px; over
 <body>
 <header>
 <h1>Policy-as-Skill</h1>
-<p>Governed Agentic AI for traceable policy-aware decision support. This report is generated automatically from the local Docker/Ollama experiment and is intended as a polished, paper-oriented reproducibility artifact.</p>
+<p>Governed Agentic AI for traceable policy-aware decision support. This report is generated from the local Docker/Ollama experiment using the static benchmark in data/tasks and is intended as a polished, paper-oriented reproducibility artifact.</p>
 </header>
 <main>
 <section>
@@ -348,7 +348,7 @@ pre {{ background:#0f172a; color:#e2e8f0; padding:18px; border-radius:18px; over
   {_balanced_task_badges(manifest)}
 </div>
 <div class='callout' style='margin-top:16px'>
-  <b>Balanced benchmark configuration.</b> The experiment now uses a balanced benchmark with <b>N=10 tasks per task type</b>. Aggregate results are reported as <b>mean ± standard deviation</b> across tasks, which makes the report more suitable for paper figures and comparisons.
+  <b>Balanced benchmark configuration.</b> The experiment uses the static curated benchmark in <code>data/tasks/benchmark_tasks.jsonl</code> with <b>N=10 tasks per task type</b>. Aggregate results are reported as <b>mean ± standard deviation</b> across tasks, which makes the report more suitable for paper figures and comparisons.
 </div>
 <p class='small'>The platform avoids ground-truth leakage: expected answers are used only by the evaluator, never during answer generation.</p>
 </section>

@@ -21,9 +21,7 @@ class Config:
     healthcheck_seconds: float = float(os.getenv("OLLAMA_HEALTHCHECK_SECONDS", "2"))
     ollama_enabled: bool = _bool_env("OLLAMA_ENABLED", True)
     seed: int = int(os.getenv("SEED", "7"))
-    tasks_per_type: int = int(os.getenv("TASKS_PER_TYPE", "10"))
-    benchmark_size: int = int(os.getenv("BENCHMARK_SIZE", "0"))
-    max_tasks: int = int(os.getenv("MAX_TASKS", "0"))  # 0 means all generated tasks
+    max_tasks: int = int(os.getenv("MAX_TASKS", "0"))  # 0 means all curated tasks in data/tasks
     top_k: int = int(os.getenv("TOP_K", "5"))
     methods: str = os.getenv(
         "METHODS",

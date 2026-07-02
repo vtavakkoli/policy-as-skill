@@ -10,7 +10,6 @@ from pathlib import Path
 from statistics import mean, pstdev
 
 from .agents import run_method
-from .benchmark_generator import ensure_research_benchmark
 from .config import Config
 from .data_loader import load_policies, load_tasks
 from .evaluators import evaluate
@@ -73,8 +72,8 @@ def main() -> None:
     trace_path = cfg.result_dir / "traces.jsonl"
     trace_path.write_text("", encoding="utf-8")
 
-    benchmark_path = ensure_research_benchmark(cfg.data_dir, cfg.result_dir, cfg.tasks_per_type, cfg.seed)
     policies = load_policies(cfg.data_dir)
+    benchmark_path = cfg.data_dir / "tasks" / "benchmark_tasks.jsonl"
     tasks = load_tasks(cfg.data_dir, benchmark_path)
     if cfg.max_tasks > 0:
         tasks = tasks[: cfg.max_tasks]
@@ -101,8 +100,7 @@ def main() -> None:
         "ollama_available": client.is_available(),
         "seed": cfg.seed,
         "benchmark_path": str(benchmark_path),
-        "tasks_per_type": cfg.tasks_per_type,
-        "benchmark_requested_size": cfg.benchmark_size,
+        "benchmark_source": "static curated tasks in data/tasks/benchmark_tasks.jsonl",
         "tasks_evaluated": len(tasks),
         "task_type_distribution": dict(sorted(task_type_counts.items())),
         "methods": methods,
