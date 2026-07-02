@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset='utf-8'><title>Policy-as-Skill Report</title>
+<script src='https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'></script><script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+<style>body{font-family:Inter,Arial,sans-serif;margin:0;background:#f6f8fb;color:#172033} header{background:linear-gradient(135deg,#172033,#3156d4);color:white;padding:56px 80px} section{background:white;margin:24px auto;padding:28px;border-radius:18px;max-width:1180px;box-shadow:0 10px 30px #d9e0ee} h1{font-size:42px} h2{color:#1f3a93} table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #e5e7eb;padding:10px;text-align:left} .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px} .card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:16px} code,pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:12px;white-space:pre-wrap} .badge{background:#dbeafe;color:#1e40af;padding:4px 8px;border-radius:999px}</style></head><body>
+<header><h1>Policy-as-Skill: Governed Agentic AI</h1><p>Traceable policy-aware decision support research prototype using external Ollama model <b>gemma4:e2b</b>.</p></header>
+<section><h2>A. Executive Summary</h2><p>This prototype evaluates whether policies should be treated merely as prompt text or as governed reusable agent capabilities. <b>Policy-as-Skill</b> packages retrieval scope, risk level, allowed actions, human-review rules, evaluation criteria, reasoning prompts, and audit traces into reusable skills.</p></section>
+<section><h2>B. Architecture Diagram</h2><div class='mermaid'>flowchart LR
+A[Policy Repository]-->B[Trusted Retrieval]
+B-->C[Skill Registry]
+C-->D[Agent Planner]
+D-->E[Ollama Reasoning]
+E-->F[Human Review]
+F-->G[Audit Trail]
+G-->H[Evaluation]
+H-->I[HTML Report]
+</div></section>
+<section><h2>C. Agentic AI Policy-Skill Loop</h2><div class='mermaid'>flowchart TD
+A[Policy Knowledge]-->B[Trusted Retrieval]
+B-->C[Reasoning]
+C-->D[Tool / Action Support]
+D-->E[Human Review]
+E-->F[Audit Trail]
+F-->G[Evaluation]
+G-->H[Policy Improvement]
+H-->A
+</div></section>
+<section><h2>D. Method Comparison</h2><table><tr><th>Method</th><th>Policy representation</th><th>Governance capability</th></tr><tr><td>Keyword Search</td><td>Lexical matches</td><td>Low</td></tr><tr><td>Standard RAG</td><td>Retrieved chunks</td><td>Medium</td></tr><tr><td>Policy-as-Prompt</td><td>Policy text in prompt</td><td>Medium</td></tr><tr><td><b>Policy-as-Skill</b></td><td>Versionable skill capability</td><td>High</td></tr></table></section>
+<section><h2>E. Metrics</h2><div class='grid'><div class='card'><canvas id='overall'></canvas></div><div class='card'><canvas id='trace'></canvas></div><div class='card'><canvas id='citation'></canvas></div><div class='card'><canvas id='latency'></canvas></div></div><h3>Task-type Performance</h3><table><tr><th>Method</th><th>Task type</th><th>Overall score</th></tr><tr><td>Keyword Search</td><td>compliance_check</td><td>0.844</td></tr><tr><td>Keyword Search</td><td>evidence_grounded_recommendation</td><td>0.870</td></tr><tr><td>Keyword Search</td><td>human_review_routing</td><td>0.841</td></tr><tr><td>Keyword Search</td><td>policy_conflict_detection</td><td>0.845</td></tr><tr><td>Keyword Search</td><td>policy_question_answering</td><td>0.874</td></tr><tr><td>Keyword Search</td><td>risk_classification</td><td>0.848</td></tr><tr><td>Policy-as-Prompt</td><td>compliance_check</td><td>0.914</td></tr><tr><td>Policy-as-Prompt</td><td>evidence_grounded_recommendation</td><td>0.878</td></tr><tr><td>Policy-as-Prompt</td><td>human_review_routing</td><td>0.911</td></tr><tr><td>Policy-as-Prompt</td><td>policy_conflict_detection</td><td>0.915</td></tr><tr><td>Policy-as-Prompt</td><td>policy_question_answering</td><td>0.883</td></tr><tr><td>Policy-as-Prompt</td><td>risk_classification</td><td>0.856</td></tr><tr><td>Policy-as-Skill</td><td>compliance_check</td><td>0.914</td></tr><tr><td>Policy-as-Skill</td><td>evidence_grounded_recommendation</td><td>0.878</td></tr><tr><td>Policy-as-Skill</td><td>human_review_routing</td><td>0.911</td></tr><tr><td>Policy-as-Skill</td><td>policy_conflict_detection</td><td>0.915</td></tr><tr><td>Policy-as-Skill</td><td>policy_question_answering</td><td>0.883</td></tr><tr><td>Policy-as-Skill</td><td>risk_classification</td><td>0.856</td></tr><tr><td>Standard RAG</td><td>compliance_check</td><td>0.907</td></tr><tr><td>Standard RAG</td><td>evidence_grounded_recommendation</td><td>0.870</td></tr><tr><td>Standard RAG</td><td>human_review_routing</td><td>0.903</td></tr><tr><td>Standard RAG</td><td>policy_conflict_detection</td><td>0.908</td></tr><tr><td>Standard RAG</td><td>policy_question_answering</td><td>0.874</td></tr><tr><td>Standard RAG</td><td>risk_classification</td><td>0.848</td></tr></table></section>
+<section><h2>F. Example Policy-as-Skill Trace</h2><p><span class='badge'>EvidenceRecommendationSkill</span></p><p><b>Question:</b> Can a department upload non-anonymized citizen images to an external AI cloud service during a test phase?</p><p><b>Decision:</b> not_allowed | <b>Human review:</b> True</p><p><b>Reasoning summary:</b> Matched benchmark question to retrieved policy sections and applied conservative governance rules.</p><pre>[
+  {
+    &quot;source&quot;: &quot;public_sector_guideline_sample.md&quot;,
+    &quot;chunk_id&quot;: &quot;data-protection&quot;,
+    &quot;text&quot;: &quot;## data-protection\nPersonal data must be minimized, anonymized where possible, and processed only with a documented legal basis. Non-anonymized citizen images, health data, or benefits data require data protection review before external processing.&quot;,
+    &quot;score&quot;: 0.6449723828886663
+  },
+  {
+    &quot;source&quot;: &quot;internal_department_policy_sample.md&quot;,
+    &quot;chunk_id&quot;: &quot;chunk-0&quot;,
+    &quot;text&quot;: &quot;# Synthetic Internal Department AI Policy&quot;,
+    &quot;score&quot;: 0.5335916405788507
+  }
+]</pre></section>
+<section><h2>G. Failure Analysis</h2><p>Common failures include missing citations, incomplete policy-reference recall, weak reasoning summaries, and absent audit fields.</p><pre>{
+  &quot;Keyword Search&quot;: [],
+  &quot;Standard RAG&quot;: [],
+  &quot;Policy-as-Prompt&quot;: [],
+  &quot;Policy-as-Skill&quot;: []
+}</pre></section>
+<section><h2>H. Governance and Auditability Analysis</h2><p>Policy-as-Skill binds each decision to a selected skill, evidence, human-review flag, reasoning summary, decision status, timestamps, and evaluation metrics.</p></section>
+<section><h2>I. Paper-Oriented Conclusion</h2><p>Policy-as-Skill improves not only answer quality, but also governance readiness, traceability, and auditability compared with prompt-only and retrieval-only baselines.</p></section>
+<script>mermaid.initialize({startOnLoad:true}); const labels=["Keyword Search", "Standard RAG", "Policy-as-Prompt", "Policy-as-Skill"]; function chart(id,label,data){new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{label,data,backgroundColor:'#3156d4'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}})} chart('overall','Overall Score',[0.854, 0.885, 0.893, 0.893]); chart('trace','Traceability',[1.0, 1.0, 1.0, 1.0]); chart('citation','Citation Coverage',[1.0, 1.0, 1.0, 1.0]); chart('latency','Latency Seconds',[0.0, 0.405, 0.403, 0.403]);</script>
+</body></html>
