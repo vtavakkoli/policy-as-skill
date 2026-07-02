@@ -42,11 +42,12 @@ Copy the example environment file if desired:
 cp .env.example .env
 ```
 
-Default values:
+Default values. The timeout is intentionally longer than the initial model load path because Ollama can take more than one second to load a model before generating the first token:
 
 ```env
 OLLAMA_BASE_URL=http://host.docker.internal:11434
 OLLAMA_MODEL=gemma4:e2b
+OLLAMA_TIMEOUT_SECONDS=120
 ```
 
 ## Run the experiment
@@ -61,7 +62,7 @@ or:
 docker compose run --rm policy-as-skill
 ```
 
-The main entry point is `src/policy_as_skill/main.py`. All outputs are written to `result/`, including the final report:
+The main entry point is `src/policy_as_skill/main.py`. The application also writes INFO/WARNING/ERROR logs to stdout so you can see startup configuration, loaded inputs, per-task progress, Ollama request attempts, model errors, and report generation while the system runs. All outputs are written to `result/`, including the final report:
 
 ```text
 result/report.html
@@ -72,7 +73,7 @@ result/report.html
 - `result/report.html` — polished self-contained paper-oriented HTML report.
 - `result/metrics.csv` — per-task and per-method metrics.
 - `result/metrics.json` — aggregate and detailed metrics.
-- `result/traces.jsonl` — prompts, outputs, retrieved evidence, decisions, and audit traces.
+- `result/traces.jsonl` — prompts, outputs, retrieved evidence, decisions, Ollama request attempts/errors, and audit traces.
 - `result/failures.json` — failure cases grouped by method.
 
 ## Metrics
