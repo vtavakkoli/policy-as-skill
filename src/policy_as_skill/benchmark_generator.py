@@ -1,8 +1,9 @@
 import json
 import random
+from collections import Counter
 from pathlib import Path
 
-from .data_loader import BenchmarkTask, load_tasks_from_path
+from .data_loader import load_tasks_from_path
 
 
 SCENARIOS = [
@@ -88,16 +89,13 @@ VARIANTS = [
     "As a compliance officer reviewing an AI case, {stem}",
     "Considering governance and auditability, {stem}",
     "For a department preparing an AI solution, {stem}",
+    "Based on the current policy set, {stem}",
+    "Using policy-grounded reasoning only, {stem}",
 ]
 
 
-def ensure_research_benchmark(data_dir: Path, result_dir: Path, min_tasks: int, seed: int = 7) -> Path:
-    """Create a larger deterministic synthetic benchmark for platform experiments.
-
-    The original curated tasks are preserved. The generated file is written to result/
-    so the repository keeps a small hand-authored task file while the platform can
-    scale to larger controlled experiments.
-    """
+def ensure_research_benchmark(data_dir: Path, result_dir: Path, tasks_per_type: int, seed: int = 7) -> Path:
+    """Create a deterministic balanced benchmark with the same N for each task type."""
     source = data_dir / "tasks" / "benchmark_tasks.jsonl"
     base = load_tasks_from_path(source)
     out = result_dir / "benchmark_generated.jsonl"
@@ -105,12 +103,26 @@ def ensure_research_benchmark(data_dir: Path, result_dir: Path, min_tasks: int, 
 
     rng = random.Random(seed)
     rows: list[dict] = []
-    for t in base:
-        rows.append(t.__dict__ | {"metadata": t.metadata | {"origin": "curated"}})
 
-    i = 1
-    while len(rows) < max(min_tasks, len(base)):
-        s = rng.choice(SCENARIOS)
+    # Keep a balanced subset of curated tasks first.
+    base_by_type: dict[str, list[dict]] = {}
+    for t in base:
+        base_by_type.setdefault(t.task_type, []).append(t.__dict__ | {"metadata": t.metadata | {"origin": "curated"}})
+
+    all_types = [s["type"] for s in SCENARIOS]
+    counts: Counter[str] = Counter()
+
+    for task_type in all_types:
+        for row in base_by_type.get(task_type, [])[:tasks_per_type]:
+            rows.append(row)
+            counts[task_type] += 1
+
+    scenario_map = {s["type"]: s for s in SCENARIOS}
+    seq = 1
+    while any(counts[t] < tasks_per_type for t in all_types):
+        pending = [t for t in all_types if counts[t] < tasks_per_type]
+        task_type = pending[seq % len(pending)] if len(pending) > 1 else pending[0]
+        s = scenario_map[task_type]
         template = rng.choice(VARIANTS)
         noise = rng.choice([
             "Include only policy-grounded information.",
@@ -118,11 +130,12 @@ def ensure_research_benchmark(data_dir: Path, result_dir: Path, min_tasks: int, 
             "Mention whether human review is required.",
             "Consider policy updates and traceability.",
             "Do not rely on memory; use evidence.",
+            "State the decision class and the justification.",
         ])
         q = f"{template.format(stem=s['stem'])} {noise}"
         rows.append(
             {
-                "id": f"G{i:04d}",
+                "id": f"G{seq:04d}",
                 "task_type": s["type"],
                 "question": q,
                 "expected_answer": s["answer"],
@@ -134,7 +147,11 @@ def ensure_research_benchmark(data_dir: Path, result_dir: Path, min_tasks: int, 
                 "metadata": {"origin": "generated", "scenario": s["type"], "variant": template},
             }
         )
-        i += 1
+        counts[task_type] += 1
+        seq += 1
+
+    # deterministic ordering by type then id helps paper tables
+    rows.sort(key=lambda r: (r["task_type"], str(r["id"])))
 
     with out.open("w", encoding="utf-8") as f:
         for r in rows:

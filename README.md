@@ -145,8 +145,10 @@ This is useful for testing Docker, metrics, traces, and report generation.
 For a paper-style run, increase the benchmark size and run all generated tasks:
 
 ```bash
-BENCHMARK_SIZE=300 MAX_TASKS=0 docker compose up --build
+TASKS_PER_TYPE=10 MAX_TASKS=0 docker compose up --build
 ```
+
+This generates a balanced benchmark with N=10 per task type (80 tasks total). Reported figures show mean ± standard deviation across tasks.
 
 `MAX_TASKS=0` means evaluate all generated tasks.
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from .data_loader import BenchmarkTask
-from .utils import containment, token_similarity, tokens
+from .utils import containment, token_similarity
 
 
 def expected_review(task: BenchmarkTask) -> bool:
@@ -41,9 +41,6 @@ def _citation_stats(task: BenchmarkTask, trace: dict) -> tuple[float, float, flo
 
 
 def _audit_completeness(trace: dict) -> float:
-    # A paper-grade audit trail should be complete regardless of method. Baselines
-    # can still be executed by the platform, but they do not receive full credit
-    # unless they expose skill/version/validation artifacts that a reviewer can inspect.
     fields = [
         "timestamp",
         "task_id",
@@ -88,7 +85,6 @@ def _unsupported_claim_rate(trace: dict) -> float:
     if not answer.strip():
         return 1.0
     support = containment(answer, evidence_text)
-    # Some connecting words will not appear in evidence. Be conservative.
     return max(0.0, min(1.0, 1.0 - support))
 
 
@@ -108,6 +104,11 @@ def _update_adaptation(task: BenchmarkTask, trace: dict) -> float:
     citations = " ".join(str(c) for c in trace.get("citations", [])).lower()
     evidence = " ".join(str(e.get("citation_id", "")) + " " + str(e.get("version", "")) for e in trace.get("evidence", []) or []).lower()
     return 1.0 if expected_version in citations or expected_version in evidence else 0.0
+
+
+def _task_success(overall: float, governance: float, decision_accuracy: float, citation_precision: float) -> float:
+    success = overall >= 0.75 and governance >= 0.80 and decision_accuracy >= 0.65 and citation_precision >= 0.60
+    return 1.0 if success else 0.0
 
 
 def evaluate(task: BenchmarkTask, trace: dict) -> dict:
@@ -134,6 +135,7 @@ def evaluate(task: BenchmarkTask, trace: dict) -> dict:
         + 0.10 * traceability
         + 0.10 * governance
     )
+    success = _task_success(overall, governance, decision_accuracy, citation_precision)
     return {
         "answer_similarity": round(sim, 6),
         "citation_coverage": round(citation_coverage, 6),
@@ -148,6 +150,7 @@ def evaluate(task: BenchmarkTask, trace: dict) -> dict:
         "audit_completeness": round(audit, 6),
         "governance_readiness_score": round(governance, 6),
         "update_adaptation_score": round(update, 6),
+        "task_success": round(success, 6),
         "latency_seconds": round(float(trace.get("latency_seconds", 0)), 6),
         "overall_score": round(overall, 6),
     }

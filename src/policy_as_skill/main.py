@@ -5,8 +5,9 @@ import json
 import logging
 import platform
 import random
+from collections import Counter
 from pathlib import Path
-from statistics import mean
+from statistics import mean, pstdev
 
 from .agents import run_method
 from .benchmark_generator import ensure_research_benchmark
@@ -45,6 +46,7 @@ def _aggregate(rows: list[dict], methods: list[str]) -> dict:
         "audit_completeness",
         "governance_readiness_score",
         "update_adaptation_score",
+        "task_success",
         "latency_seconds",
         "overall_score",
     ]
@@ -53,7 +55,10 @@ def _aggregate(rows: list[dict], methods: list[str]) -> dict:
         mr = [r for r in rows if r["method"] == m]
         if not mr:
             continue
-        agg[m] = {k: mean(float(r[k]) for r in mr) for k in numeric}
+        agg[m] = {
+            k: {"mean": mean(float(r[k]) for r in mr), "std": (pstdev(float(r[k]) for r in mr) if len(mr) > 1 else 0.0)}
+            for k in numeric
+        }
         agg[m]["n"] = len(mr)
     return agg
 
@@ -68,7 +73,7 @@ def main() -> None:
     trace_path = cfg.result_dir / "traces.jsonl"
     trace_path.write_text("", encoding="utf-8")
 
-    benchmark_path = ensure_research_benchmark(cfg.data_dir, cfg.result_dir, cfg.benchmark_size, cfg.seed)
+    benchmark_path = ensure_research_benchmark(cfg.data_dir, cfg.result_dir, cfg.tasks_per_type, cfg.seed)
     policies = load_policies(cfg.data_dir)
     tasks = load_tasks(cfg.data_dir, benchmark_path)
     if cfg.max_tasks > 0:
@@ -85,6 +90,7 @@ def main() -> None:
         healthcheck_seconds=cfg.healthcheck_seconds,
     )
 
+    task_type_counts = Counter(t.task_type for t in tasks)
     manifest = {
         "timestamp": now(),
         "platform": platform.platform(),
@@ -95,8 +101,10 @@ def main() -> None:
         "ollama_available": client.is_available(),
         "seed": cfg.seed,
         "benchmark_path": str(benchmark_path),
+        "tasks_per_type": cfg.tasks_per_type,
         "benchmark_requested_size": cfg.benchmark_size,
         "tasks_evaluated": len(tasks),
+        "task_type_distribution": dict(sorted(task_type_counts.items())),
         "methods": methods,
         "policy_documents": [
             {"source": d.source, "version": d.version, "sha256": d.sha256, "chars": len(d.text)} for d in policies

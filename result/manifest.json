@@ -1,15 +1,26 @@
 {
-  "timestamp": "2026-07-02T13:15:12Z",
+  "timestamp": "2026-07-02T21:20:17Z",
   "platform": "Linux-4.4.0-x86_64-with-glibc2.41",
   "python": "3.13.5",
   "ollama_base_url": "http://host.docker.internal:11434",
   "ollama_model": "gemma4:e2b",
-  "ollama_enabled": true,
+  "ollama_enabled": false,
   "ollama_available": false,
   "seed": 7,
-  "benchmark_path": "/mnt/data/policy-as-skill-upgraded/result/benchmark_generated.jsonl",
-  "benchmark_requested_size": 120,
-  "tasks_evaluated": 32,
+  "benchmark_path": "/tmp/pask/policy-as-skill-upgraded/result/benchmark_generated.jsonl",
+  "tasks_per_type": 10,
+  "benchmark_requested_size": 0,
+  "tasks_evaluated": 80,
+  "task_type_distribution": {
+    "citation_audit": 10,
+    "compliance_check": 10,
+    "evidence_grounded_recommendation": 10,
+    "human_review_routing": 10,
+    "policy_conflict_detection": 10,
+    "policy_question_answering": 10,
+    "policy_update_adaptation": 10,
+    "risk_classification": 10
+  },
   "methods": [
     "Direct LLM",
     "Keyword Search",
@@ -58,5 +69,5 @@
       "chars": 845
     }
   ],
-  "run_id": "f9826e753bd1"
+  "run_id": "a2d7ea98c890"
 }
