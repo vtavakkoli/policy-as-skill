@@ -1,0 +1,11 @@
+services:
+  policy-as-skill:
+    build: .
+    environment:
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:e2b}
+    volumes:
+      - ./data:/app/data
+      - ./result:/app/result
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
