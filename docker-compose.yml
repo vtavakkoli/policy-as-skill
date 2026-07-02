@@ -5,6 +5,13 @@ services:
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:e2b}
       OLLAMA_TIMEOUT_SECONDS: ${OLLAMA_TIMEOUT_SECONDS:-120}
+      OLLAMA_HEALTHCHECK_SECONDS: ${OLLAMA_HEALTHCHECK_SECONDS:-2}
+      OLLAMA_ENABLED: ${OLLAMA_ENABLED:-true}
+      BENCHMARK_SIZE: ${BENCHMARK_SIZE:-120}
+      MAX_TASKS: ${MAX_TASKS:-32}
+      TOP_K: ${TOP_K:-5}
+      SEED: ${SEED:-7}
+      METHODS: ${METHODS:-Direct LLM,Keyword Search,Standard RAG,Hybrid RAG,Policy-as-Prompt,Structured Policy-as-Prompt,Policy-as-Skill No Audit,Policy-as-Skill}
     volumes:
       - ./data:/app/data
       - ./result:/app/result

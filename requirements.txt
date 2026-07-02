@@ -1,1 +1,2 @@
-# Prototype intentionally uses Python standard library only for offline Docker builds.
+# The prototype intentionally uses only the Python standard library.
+# This keeps Docker builds reproducible and avoids external services except host Ollama.

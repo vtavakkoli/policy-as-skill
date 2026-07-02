@@ -1,51 +1,363 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Policy-as-Skill Report</title>
-<script src='https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'></script><script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
-<style>body{font-family:Inter,Arial,sans-serif;margin:0;background:#f6f8fb;color:#172033} header{background:linear-gradient(135deg,#172033,#3156d4);color:white;padding:56px 80px} section{background:white;margin:24px auto;padding:28px;border-radius:18px;max-width:1180px;box-shadow:0 10px 30px #d9e0ee} h1{font-size:42px} h2{color:#1f3a93} table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #e5e7eb;padding:10px;text-align:left} .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px} .card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:16px} code,pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:12px;white-space:pre-wrap} .badge{background:#dbeafe;color:#1e40af;padding:4px 8px;border-radius:999px}</style></head><body>
-<header><h1>Policy-as-Skill: Governed Agentic AI</h1><p>Traceable policy-aware decision support research prototype using external Ollama model <b>gemma4:e2b</b>.</p></header>
-<section><h2>A. Executive Summary</h2><p>This prototype evaluates whether policies should be treated merely as prompt text or as governed reusable agent capabilities. <b>Policy-as-Skill</b> packages retrieval scope, risk level, allowed actions, human-review rules, evaluation criteria, reasoning prompts, and audit traces into reusable skills.</p></section>
-<section><h2>B. Architecture Diagram</h2><div class='mermaid'>flowchart LR
-A[Policy Repository]-->B[Trusted Retrieval]
-B-->C[Skill Registry]
-C-->D[Agent Planner]
-D-->E[Ollama Reasoning]
-E-->F[Human Review]
-F-->G[Audit Trail]
-G-->H[Evaluation]
-H-->I[HTML Report]
-</div></section>
-<section><h2>C. Agentic AI Policy-Skill Loop</h2><div class='mermaid'>flowchart TD
-A[Policy Knowledge]-->B[Trusted Retrieval]
-B-->C[Reasoning]
-C-->D[Tool / Action Support]
-D-->E[Human Review]
-E-->F[Audit Trail]
-F-->G[Evaluation]
-G-->H[Policy Improvement]
-H-->A
-</div></section>
-<section><h2>D. Method Comparison</h2><table><tr><th>Method</th><th>Policy representation</th><th>Governance capability</th></tr><tr><td>Keyword Search</td><td>Lexical matches</td><td>Low</td></tr><tr><td>Standard RAG</td><td>Retrieved chunks</td><td>Medium</td></tr><tr><td>Policy-as-Prompt</td><td>Policy text in prompt</td><td>Medium</td></tr><tr><td><b>Policy-as-Skill</b></td><td>Versionable skill capability</td><td>High</td></tr></table></section>
-<section><h2>E. Metrics</h2><div class='grid'><div class='card'><canvas id='overall'></canvas></div><div class='card'><canvas id='trace'></canvas></div><div class='card'><canvas id='citation'></canvas></div><div class='card'><canvas id='latency'></canvas></div></div><h3>Task-type Performance</h3><table><tr><th>Method</th><th>Task type</th><th>Overall score</th></tr><tr><td>Keyword Search</td><td>compliance_check</td><td>0.844</td></tr><tr><td>Keyword Search</td><td>evidence_grounded_recommendation</td><td>0.870</td></tr><tr><td>Keyword Search</td><td>human_review_routing</td><td>0.841</td></tr><tr><td>Keyword Search</td><td>policy_conflict_detection</td><td>0.845</td></tr><tr><td>Keyword Search</td><td>policy_question_answering</td><td>0.874</td></tr><tr><td>Keyword Search</td><td>risk_classification</td><td>0.848</td></tr><tr><td>Policy-as-Prompt</td><td>compliance_check</td><td>0.914</td></tr><tr><td>Policy-as-Prompt</td><td>evidence_grounded_recommendation</td><td>0.878</td></tr><tr><td>Policy-as-Prompt</td><td>human_review_routing</td><td>0.911</td></tr><tr><td>Policy-as-Prompt</td><td>policy_conflict_detection</td><td>0.915</td></tr><tr><td>Policy-as-Prompt</td><td>policy_question_answering</td><td>0.883</td></tr><tr><td>Policy-as-Prompt</td><td>risk_classification</td><td>0.856</td></tr><tr><td>Policy-as-Skill</td><td>compliance_check</td><td>0.914</td></tr><tr><td>Policy-as-Skill</td><td>evidence_grounded_recommendation</td><td>0.878</td></tr><tr><td>Policy-as-Skill</td><td>human_review_routing</td><td>0.911</td></tr><tr><td>Policy-as-Skill</td><td>policy_conflict_detection</td><td>0.915</td></tr><tr><td>Policy-as-Skill</td><td>policy_question_answering</td><td>0.883</td></tr><tr><td>Policy-as-Skill</td><td>risk_classification</td><td>0.856</td></tr><tr><td>Standard RAG</td><td>compliance_check</td><td>0.907</td></tr><tr><td>Standard RAG</td><td>evidence_grounded_recommendation</td><td>0.870</td></tr><tr><td>Standard RAG</td><td>human_review_routing</td><td>0.903</td></tr><tr><td>Standard RAG</td><td>policy_conflict_detection</td><td>0.908</td></tr><tr><td>Standard RAG</td><td>policy_question_answering</td><td>0.874</td></tr><tr><td>Standard RAG</td><td>risk_classification</td><td>0.848</td></tr></table></section>
-<section><h2>F. Example Policy-as-Skill Trace</h2><p><span class='badge'>EvidenceRecommendationSkill</span></p><p><b>Question:</b> Can a department upload non-anonymized citizen images to an external AI cloud service during a test phase?</p><p><b>Decision:</b> not_allowed | <b>Human review:</b> True</p><p><b>Reasoning summary:</b> Matched benchmark question to retrieved policy sections and applied conservative governance rules.</p><pre>[
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'/>
+<title>Policy-as-Skill Research Report</title>
+<style>
+:root { --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --blue:#3156d4; --bg:#f6f8fb; --card:#ffffff; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif; line-height:1.55; }
+header { padding:64px 7vw; color:#fff; background: radial-gradient(circle at 20% 10%, #60a5fa, transparent 30%), linear-gradient(135deg,#0f172a,#1d4ed8 55%,#7c3aed); }
+h1 { font-size:clamp(34px,5vw,58px); margin:0 0 14px; letter-spacing:-.04em; line-height:1.0; }
+header p { max-width:980px; font-size:20px; opacity:.95; }
+main { width:min(1220px,94vw); margin:28px auto 80px; }
+section { background:var(--card); border:1px solid var(--line); border-radius:24px; padding:30px; margin:24px 0; box-shadow:0 16px 40px rgba(15,23,42,.06); }
+h2 { font-size:27px; margin:0 0 14px; letter-spacing:-.02em; }
+h3 { margin:6px 0 12px; }
+.grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:18px; }
+.kpi-grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:14px; }
+.kpi { background:#f8fafc; border:1px solid var(--line); border-radius:18px; padding:18px; }
+.kpi b { display:block; font-size:28px; color:var(--blue); }
+.pill { display:inline-block; padding:8px 12px; margin:5px 6px 5px 0; border-radius:999px; background:#dbeafe; color:#1e3a8a; text-decoration:none; font-weight:700; font-size:13px; }
+table { border-collapse:collapse; width:100%; font-size:14px; }
+th,td { padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+th { background:#f8fafc; color:#334155; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+pre { background:#0f172a; color:#e2e8f0; padding:18px; border-radius:18px; overflow:auto; max-height:520px; font-size:13px; }
+.chart-card { border:1px solid var(--line); border-radius:20px; background:#fff; padding:16px; overflow:hidden; }
+.chart-card svg { width:100%; height:auto; }
+.small { color:var(--muted); font-size:14px; }
+.method-card { border:1px solid var(--line); border-radius:18px; padding:16px; background:#f8fafc; }
+@media (max-width: 900px) { .grid,.kpi-grid { grid-template-columns:1fr; } section { padding:20px; } }
+</style>
+</head>
+<body>
+<header>
+<h1>Policy-as-Skill</h1>
+<p>Governed Agentic AI for traceable policy-aware decision support. This report is generated automatically from the local Docker/Ollama experiment and is intended as a paper-oriented reproducibility artifact.</p>
+</header>
+<main>
+<section>
+<h2>A. Executive Summary</h2>
+<p><b>Policy-as-Prompt</b> encodes policies directly as prompts. <b>Policy-as-Skill</b> turns policies into reusable, governed, versioned, and auditable agent capabilities that combine retrieval, reasoning, review routing, validation, and evaluation.</p>
+<div class='kpi-grid'>
+  <div class='kpi'><span>Tasks evaluated</span><b>32</b></div>
+  <div class='kpi'><span>Methods</span><b>8</b></div>
+  <div class='kpi'><span>Trace records</span><b>256</b></div>
+  <div class='kpi'><span>Generated at</span><b style='font-size:15px'>2026-07-02T13:15:12Z</b></div>
+</div>
+<p class='small'>The platform avoids ground-truth leakage: expected answers are used only by the evaluator, never during answer generation.</p>
+</section>
+
+<section><h2>B. Architecture Diagram</h2>
+<svg viewBox="0 0 1180 420" role="img" aria-label="Policy-as-Skill architecture" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#1d4ed8"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#94a3b8" flood-opacity="0.25"/></filter>
+  </defs>
+  <rect width="1180" height="420" rx="26" fill="#f8fafc"/>
+  <text x="50" y="54" font-family="Inter,Arial" font-size="28" font-weight="800" fill="#0f172a">Policy-as-Skill Reference Architecture</text>
+  <g font-family="Inter,Arial" font-size="15" font-weight="700" fill="#0f172a" filter="url(#shadow)">
+    <rect x="45" y="105" width="135" height="82" rx="18" fill="#dbeafe"/><text x="68" y="138">Policy</text><text x="68" y="162">Repository</text>
+    <rect x="215" y="105" width="135" height="82" rx="18" fill="#e0e7ff"/><text x="240" y="138">Trusted</text><text x="240" y="162">Retrieval</text>
+    <rect x="385" y="105" width="135" height="82" rx="18" fill="#ede9fe"/><text x="409" y="138">Skill</text><text x="409" y="162">Registry</text>
+    <rect x="555" y="105" width="135" height="82" rx="18" fill="#fce7f3"/><text x="579" y="138">Agent</text><text x="579" y="162">Planner</text>
+    <rect x="725" y="105" width="135" height="82" rx="18" fill="#fee2e2"/><text x="746" y="138">Ollama</text><text x="746" y="162">Reasoning</text>
+    <rect x="895" y="105" width="135" height="82" rx="18" fill="#dcfce7"/><text x="918" y="138">Human</text><text x="918" y="162">Review</text>
+    <rect x="45" y="265" width="155" height="82" rx="18" fill="#fef9c3"/><text x="72" y="298">Audit</text><text x="72" y="322">Trail</text>
+    <rect x="240" y="265" width="155" height="82" rx="18" fill="#cffafe"/><text x="268" y="298">Evaluation</text><text x="268" y="322">Engine</text>
+    <rect x="435" y="265" width="155" height="82" rx="18" fill="#ffedd5"/><text x="463" y="298">Metrics +</text><text x="463" y="322">Ablations</text>
+    <rect x="630" y="265" width="155" height="82" rx="18" fill="#dcfce7"/><text x="658" y="298">HTML</text><text x="658" y="322">Report</text>
+    <rect x="825" y="265" width="205" height="82" rx="18" fill="#e2e8f0"/><text x="854" y="298">Paper-ready</text><text x="854" y="322">Evidence Package</text>
+  </g>
+  <g stroke="url(#g1)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M180 146H215"/><path d="M350 146H385"/><path d="M520 146H555"/><path d="M690 146H725"/><path d="M860 146H895"/>
+    <path d="M963 187C963 230 170 220 123 265"/><path d="M200 306H240"/><path d="M395 306H435"/><path d="M590 306H630"/><path d="M785 306H825"/>
+  </g>
+</svg>
+</section>
+<section><h2>C. Agentic AI Policy-Skill Loop</h2>
+<svg viewBox="0 0 1000 560" role="img" aria-label="Agentic AI policy skill loop" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="loopg" x1="0" x2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#16a34a"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
+  </defs>
+  <rect width="1000" height="560" rx="28" fill="#f8fafc"/>
+  <text x="60" y="60" font-family="Inter,Arial" font-size="30" font-weight="800" fill="#0f172a">Agentic AI Loop: From Policy Knowledge to Policy Improvement</text>
+  <circle cx="500" cy="290" r="168" fill="none" stroke="url(#loopg)" stroke-width="10" stroke-dasharray="16 14"/>
+  <text x="422" y="280" font-family="Inter,Arial" font-size="25" font-weight="800" fill="#0f172a">Policy-as-Skill</text>
+  <text x="405" y="314" font-family="Inter,Arial" font-size="15" fill="#334155">Reusable, governed, auditable</text>
+  <g font-family="Inter,Arial" font-size="15" font-weight="700" fill="#0f172a">
+    <rect x="405" y="95" width="190" height="60" rx="18" fill="#dbeafe"/><text x="436" y="130">Policy Knowledge</text>
+    <rect x="655" y="165" width="190" height="60" rx="18" fill="#e0e7ff"/><text x="690" y="200">Trusted Retrieval</text>
+    <rect x="705" y="340" width="190" height="60" rx="18" fill="#ede9fe"/><text x="764" y="375">Reasoning</text>
+    <rect x="405" y="445" width="190" height="60" rx="18" fill="#dcfce7"/><text x="430" y="480">Tool/Action Support</text>
+    <rect x="105" y="340" width="190" height="60" rx="18" fill="#fef9c3"/><text x="151" y="375">Human Review</text>
+    <rect x="155" y="165" width="190" height="60" rx="18" fill="#fee2e2"/><text x="195" y="200">Audit Trail</text>
+  </g>
+  <g stroke="#2563eb" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M590 135 C665 130 708 145 742 165"/>
+    <path d="M818 225 C862 270 858 320 820 340"/>
+    <path d="M725 395 C665 438 610 454 592 462"/>
+    <path d="M405 475 C320 455 270 420 235 395"/>
+    <path d="M190 340 C145 290 160 240 205 220"/>
+    <path d="M340 165 C378 138 405 130 405 130"/>
+  </g>
+  <text x="360" y="532" font-family="Inter,Arial" font-size="15" fill="#475569">Evaluation closes the loop: failures become policy, retrieval, skill, and governance improvements.</text>
+</svg>
+</section>
+
+<section>
+<h2>D. Method Comparison</h2>
+<div class='grid'>
+  <div class='method-card'><b>Direct LLM</b><p>No retrieval. Useful as a weak baseline for memory-only answers.</p></div>
+  <div class='method-card'><b>Keyword Search</b><p>Lexical retrieval with extractive answer. Low governance.</p></div>
+  <div class='method-card'><b>Standard / Hybrid RAG</b><p>Retrieved context plus LLM generation. Better access to evidence, limited audit controls.</p></div>
+  <div class='method-card'><b>Policy-as-Prompt</b><p>Policy chunks are included directly in the prompt; structured variant uses JSON policy artifacts.</p></div>
+  <div class='method-card'><b>Policy-as-Skill No Audit</b><p>Ablation: selected skill and scoped retrieval, without strict audit/citation validation.</p></div>
+  <div class='method-card'><b>Policy-as-Skill</b><p>Full method: skill registry, scoped retrieval, required evidence checks, citation validation, review routing, policy hashes, and audit trail.</p></div>
+</div>
+</section>
+
+<section>
+<h2>E. Metrics and Ablation View</h2>
+<p>Metrics include answer similarity, citation precision, policy-reference recall, evidence faithfulness, decision accuracy, traceability, audit completeness, governance readiness, and policy-update adaptation.</p>
+<div class='grid'>
+
+    <div class='chart-card'>
+      <h3>Overall score by method</h3>
+      <svg viewBox='0 0 860 320' role='img' aria-label='Overall score by method'>
+        <rect width='860' height='320' rx='18' fill='#f8fafc'/>
+        <line x1='190' y1='278' x2='830' y2='278' stroke='#cbd5e1'/>
+        <text x='18' y='60.1' font-size='13' fill='#334155'>Direct LLM</text><rect x='190' y='48.0' width='88.3' height='17.8' rx='8' fill='#3156d4'/><text x='286.3' y='60.1' font-size='13' fill='#0f172a'>0.138</text><text x='18' y='88.9' font-size='13' fill='#334155'>Hybrid RAG</text><rect x='190' y='76.8' width='497.3' height='17.8' rx='8' fill='#3156d4'/><text x='695.3' y='88.9' font-size='13' fill='#0f172a'>0.777</text><text x='18' y='117.6' font-size='13' fill='#334155'>Keyword Search</text><rect x='190' y='105.5' width='493.4' height='17.8' rx='8' fill='#3156d4'/><text x='691.4' y='117.6' font-size='13' fill='#0f172a'>0.771</text><text x='18' y='146.4' font-size='13' fill='#334155'>Policy-as-Prompt</text><rect x='190' y='134.2' width='503.0' height='17.8' rx='8' fill='#3156d4'/><text x='701.0' y='146.4' font-size='13' fill='#0f172a'>0.786</text><text x='18' y='175.1' font-size='13' fill='#334155'>Policy-as-Skill</text><rect x='190' y='163.0' width='501.1' height='17.8' rx='8' fill='#3156d4'/><text x='699.1' y='175.1' font-size='13' fill='#0f172a'>0.783</text><text x='18' y='203.9' font-size='13' fill='#334155'>Policy-as-Skill No Audit</text><rect x='190' y='191.8' width='488.3' height='17.8' rx='8' fill='#3156d4'/><text x='686.3' y='203.9' font-size='13' fill='#0f172a'>0.763</text><text x='18' y='232.6' font-size='13' fill='#334155'>Standard RAG</text><rect x='190' y='220.5' width='503.0' height='17.8' rx='8' fill='#3156d4'/><text x='701.0' y='232.6' font-size='13' fill='#0f172a'>0.786</text><text x='18' y='261.4' font-size='13' fill='#334155'>Structured Policy-as-Prompt</text><rect x='190' y='249.2' width='497.3' height='17.8' rx='8' fill='#3156d4'/><text x='695.3' y='261.4' font-size='13' fill='#0f172a'>0.777</text>
+      </svg>
+    </div>
+
+    <div class='chart-card'>
+      <h3>Governance readiness by method</h3>
+      <svg viewBox='0 0 860 320' role='img' aria-label='Governance readiness by method'>
+        <rect width='860' height='320' rx='18' fill='#f8fafc'/>
+        <line x1='190' y1='278' x2='830' y2='278' stroke='#cbd5e1'/>
+        <text x='18' y='60.1' font-size='13' fill='#334155'>Direct LLM</text><rect x='190' y='48.0' width='383.4' height='17.8' rx='8' fill='#3156d4'/><text x='581.4' y='60.1' font-size='13' fill='#0f172a'>0.599</text><text x='18' y='88.9' font-size='13' fill='#334155'>Hybrid RAG</text><rect x='190' y='76.8' width='586.2' height='17.8' rx='8' fill='#3156d4'/><text x='784.2' y='88.9' font-size='13' fill='#0f172a'>0.916</text><text x='18' y='117.6' font-size='13' fill='#334155'>Keyword Search</text><rect x='190' y='105.5' width='586.2' height='17.8' rx='8' fill='#3156d4'/><text x='784.2' y='117.6' font-size='13' fill='#0f172a'>0.916</text><text x='18' y='146.4' font-size='13' fill='#334155'>Policy-as-Prompt</text><rect x='190' y='134.2' width='586.2' height='17.8' rx='8' fill='#3156d4'/><text x='784.2' y='146.4' font-size='13' fill='#0f172a'>0.916</text><text x='18' y='175.1' font-size='13' fill='#334155'>Policy-as-Skill</text><rect x='190' y='163.0' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='175.1' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='203.9' font-size='13' fill='#334155'>Policy-as-Skill No Audit</text><rect x='190' y='191.8' width='602.9' height='17.8' rx='8' fill='#3156d4'/><text x='800.9' y='203.9' font-size='13' fill='#0f172a'>0.942</text><text x='18' y='232.6' font-size='13' fill='#334155'>Standard RAG</text><rect x='190' y='220.5' width='586.2' height='17.8' rx='8' fill='#3156d4'/><text x='784.2' y='232.6' font-size='13' fill='#0f172a'>0.916</text><text x='18' y='261.4' font-size='13' fill='#334155'>Structured Policy-as-Prompt</text><rect x='190' y='249.2' width='586.2' height='17.8' rx='8' fill='#3156d4'/><text x='784.2' y='261.4' font-size='13' fill='#0f172a'>0.916</text>
+      </svg>
+    </div>
+
+    <div class='chart-card'>
+      <h3>Traceability by method</h3>
+      <svg viewBox='0 0 860 320' role='img' aria-label='Traceability by method'>
+        <rect width='860' height='320' rx='18' fill='#f8fafc'/>
+        <line x1='190' y1='278' x2='830' y2='278' stroke='#cbd5e1'/>
+        <text x='18' y='60.1' font-size='13' fill='#334155'>Direct LLM</text><rect x='190' y='48.0' width='457.0' height='17.8' rx='8' fill='#3156d4'/><text x='655.0' y='60.1' font-size='13' fill='#0f172a'>0.714</text><text x='18' y='88.9' font-size='13' fill='#334155'>Hybrid RAG</text><rect x='190' y='76.8' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='88.9' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='117.6' font-size='13' fill='#334155'>Keyword Search</text><rect x='190' y='105.5' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='117.6' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='146.4' font-size='13' fill='#334155'>Policy-as-Prompt</text><rect x='190' y='134.2' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='146.4' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='175.1' font-size='13' fill='#334155'>Policy-as-Skill</text><rect x='190' y='163.0' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='175.1' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='203.9' font-size='13' fill='#334155'>Policy-as-Skill No Audit</text><rect x='190' y='191.8' width='548.5' height='17.8' rx='8' fill='#3156d4'/><text x='746.5' y='203.9' font-size='13' fill='#0f172a'>0.857</text><text x='18' y='232.6' font-size='13' fill='#334155'>Standard RAG</text><rect x='190' y='220.5' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='232.6' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='261.4' font-size='13' fill='#334155'>Structured Policy-as-Prompt</text><rect x='190' y='249.2' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='261.4' font-size='13' fill='#0f172a'>1.000</text>
+      </svg>
+    </div>
+
+    <div class='chart-card'>
+      <h3>Citation precision by method</h3>
+      <svg viewBox='0 0 860 320' role='img' aria-label='Citation precision by method'>
+        <rect width='860' height='320' rx='18' fill='#f8fafc'/>
+        <line x1='190' y1='278' x2='830' y2='278' stroke='#cbd5e1'/>
+        <text x='18' y='60.1' font-size='13' fill='#334155'>Direct LLM</text><rect x='190' y='48.0' width='0.0' height='17.8' rx='8' fill='#3156d4'/><text x='198.0' y='60.1' font-size='13' fill='#0f172a'>0.000</text><text x='18' y='88.9' font-size='13' fill='#334155'>Hybrid RAG</text><rect x='190' y='76.8' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='88.9' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='117.6' font-size='13' fill='#334155'>Keyword Search</text><rect x='190' y='105.5' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='117.6' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='146.4' font-size='13' fill='#334155'>Policy-as-Prompt</text><rect x='190' y='134.2' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='146.4' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='175.1' font-size='13' fill='#334155'>Policy-as-Skill</text><rect x='190' y='163.0' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='175.1' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='203.9' font-size='13' fill='#334155'>Policy-as-Skill No Audit</text><rect x='190' y='191.8' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='203.9' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='232.6' font-size='13' fill='#334155'>Standard RAG</text><rect x='190' y='220.5' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='232.6' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='261.4' font-size='13' fill='#334155'>Structured Policy-as-Prompt</text><rect x='190' y='249.2' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='261.4' font-size='13' fill='#0f172a'>1.000</text>
+      </svg>
+    </div>
+
+    <div class='chart-card'>
+      <h3>Audit completeness by method</h3>
+      <svg viewBox='0 0 860 320' role='img' aria-label='Audit completeness by method'>
+        <rect width='860' height='320' rx='18' fill='#f8fafc'/>
+        <line x1='190' y1='278' x2='830' y2='278' stroke='#cbd5e1'/>
+        <text x='18' y='60.1' font-size='13' fill='#334155'>Direct LLM</text><rect x='190' y='48.0' width='400.0' height='17.8' rx='8' fill='#3156d4'/><text x='598.0' y='60.1' font-size='13' fill='#0f172a'>0.625</text><text x='18' y='88.9' font-size='13' fill='#334155'>Hybrid RAG</text><rect x='190' y='76.8' width='519.7' height='17.8' rx='8' fill='#3156d4'/><text x='717.7' y='88.9' font-size='13' fill='#0f172a'>0.812</text><text x='18' y='117.6' font-size='13' fill='#334155'>Keyword Search</text><rect x='190' y='105.5' width='519.7' height='17.8' rx='8' fill='#3156d4'/><text x='717.7' y='117.6' font-size='13' fill='#0f172a'>0.812</text><text x='18' y='146.4' font-size='13' fill='#334155'>Policy-as-Prompt</text><rect x='190' y='134.2' width='519.7' height='17.8' rx='8' fill='#3156d4'/><text x='717.7' y='146.4' font-size='13' fill='#0f172a'>0.812</text><text x='18' y='175.1' font-size='13' fill='#334155'>Policy-as-Skill</text><rect x='190' y='163.0' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='175.1' font-size='13' fill='#0f172a'>1.000</text><text x='18' y='203.9' font-size='13' fill='#334155'>Policy-as-Skill No Audit</text><rect x='190' y='191.8' width='600.3' height='17.8' rx='8' fill='#3156d4'/><text x='798.3' y='203.9' font-size='13' fill='#0f172a'>0.938</text><text x='18' y='232.6' font-size='13' fill='#334155'>Standard RAG</text><rect x='190' y='220.5' width='519.7' height='17.8' rx='8' fill='#3156d4'/><text x='717.7' y='232.6' font-size='13' fill='#0f172a'>0.812</text><text x='18' y='261.4' font-size='13' fill='#334155'>Structured Policy-as-Prompt</text><rect x='190' y='249.2' width='519.7' height='17.8' rx='8' fill='#3156d4'/><text x='717.7' y='261.4' font-size='13' fill='#0f172a'>0.812</text>
+      </svg>
+    </div>
+
+    <div class='chart-card'>
+      <h3>Latency by method</h3>
+      <svg viewBox='0 0 860 320' role='img' aria-label='Latency by method'>
+        <rect width='860' height='320' rx='18' fill='#f8fafc'/>
+        <line x1='190' y1='278' x2='830' y2='278' stroke='#cbd5e1'/>
+        <text x='18' y='60.1' font-size='13' fill='#334155'>Direct LLM</text><rect x='190' y='48.0' width='0.0' height='17.8' rx='8' fill='#3156d4'/><text x='198.0' y='60.1' font-size='13' fill='#0f172a'>0.000s</text><text x='18' y='88.9' font-size='13' fill='#334155'>Hybrid RAG</text><rect x='190' y='76.8' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='88.9' font-size='13' fill='#0f172a'>0.001s</text><text x='18' y='117.6' font-size='13' fill='#334155'>Keyword Search</text><rect x='190' y='105.5' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='117.6' font-size='13' fill='#0f172a'>0.001s</text><text x='18' y='146.4' font-size='13' fill='#334155'>Policy-as-Prompt</text><rect x='190' y='134.2' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='146.4' font-size='13' fill='#0f172a'>0.001s</text><text x='18' y='175.1' font-size='13' fill='#334155'>Policy-as-Skill</text><rect x='190' y='163.0' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='175.1' font-size='13' fill='#0f172a'>0.001s</text><text x='18' y='203.9' font-size='13' fill='#334155'>Policy-as-Skill No Audit</text><rect x='190' y='191.8' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='203.9' font-size='13' fill='#0f172a'>0.001s</text><text x='18' y='232.6' font-size='13' fill='#334155'>Standard RAG</text><rect x='190' y='220.5' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='232.6' font-size='13' fill='#0f172a'>0.001s</text><text x='18' y='261.4' font-size='13' fill='#334155'>Structured Policy-as-Prompt</text><rect x='190' y='249.2' width='640.0' height='17.8' rx='8' fill='#3156d4'/><text x='838.0' y='261.4' font-size='13' fill='#0f172a'>0.001s</text>
+      </svg>
+    </div>
+</div>
+<h3>Aggregate table</h3>
+<table><thead><tr><th>Method</th><th>Overall Score</th><th>Governance Readiness Score</th><th>Traceability Score</th><th>Audit Completeness</th><th>Citation Precision</th><th>Policy Ref Recall</th><th>Evidence Faithfulness</th><th>Human Review Correctness</th><th>Update Adaptation Score</th><th>Latency Seconds</th></tr></thead><tbody><tr><td>Direct LLM</td><td>0.138</td><td>0.599</td><td>0.714</td><td>0.625</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.875</td><td>0.969</td><td>0.0</td></tr><tr><td>Hybrid RAG</td><td>0.777</td><td>0.916</td><td>1.0</td><td>0.812</td><td>1.0</td><td>1.0</td><td>0.99</td><td>0.75</td><td>1.0</td><td>0.001</td></tr><tr><td>Keyword Search</td><td>0.771</td><td>0.916</td><td>1.0</td><td>0.812</td><td>1.0</td><td>0.969</td><td>0.987</td><td>0.75</td><td>1.0</td><td>0.001</td></tr><tr><td>Policy-as-Prompt</td><td>0.786</td><td>0.916</td><td>1.0</td><td>0.812</td><td>1.0</td><td>1.0</td><td>0.99</td><td>0.75</td><td>1.0</td><td>0.001</td></tr><tr><td>Policy-as-Skill</td><td>0.783</td><td>1.0</td><td>1.0</td><td>1.0</td><td>1.0</td><td>1.0</td><td>0.989</td><td>1.0</td><td>1.0</td><td>0.001</td></tr><tr><td>Policy-as-Skill No Audit</td><td>0.763</td><td>0.942</td><td>0.857</td><td>0.938</td><td>1.0</td><td>1.0</td><td>0.989</td><td>1.0</td><td>1.0</td><td>0.001</td></tr><tr><td>Standard RAG</td><td>0.786</td><td>0.916</td><td>1.0</td><td>0.812</td><td>1.0</td><td>1.0</td><td>0.99</td><td>0.75</td><td>1.0</td><td>0.001</td></tr><tr><td>Structured Policy-as-Prompt</td><td>0.777</td><td>0.916</td><td>1.0</td><td>0.812</td><td>1.0</td><td>1.0</td><td>0.99</td><td>0.75</td><td>1.0</td><td>0.001</td></tr></tbody></table>
+</section>
+
+<section>
+<h2>F. Task-Type Performance</h2>
+<table><thead><tr><th>Method</th><th>Task Type</th><th>N</th><th>Overall Score</th></tr></thead><tbody><tr><td>Direct LLM</td><td>compliance_check</td><td>8</td><td>0.140</td></tr><tr><td>Direct LLM</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.134</td></tr><tr><td>Direct LLM</td><td>human_review_routing</td><td>4</td><td>0.141</td></tr><tr><td>Direct LLM</td><td>policy_conflict_detection</td><td>4</td><td>0.140</td></tr><tr><td>Direct LLM</td><td>policy_question_answering</td><td>4</td><td>0.131</td></tr><tr><td>Direct LLM</td><td>policy_update_adaptation</td><td>1</td><td>0.135</td></tr><tr><td>Direct LLM</td><td>risk_classification</td><td>6</td><td>0.142</td></tr><tr><td>Hybrid RAG</td><td>compliance_check</td><td>8</td><td>0.791</td></tr><tr><td>Hybrid RAG</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.786</td></tr><tr><td>Hybrid RAG</td><td>human_review_routing</td><td>4</td><td>0.730</td></tr><tr><td>Hybrid RAG</td><td>policy_conflict_detection</td><td>4</td><td>0.742</td></tr><tr><td>Hybrid RAG</td><td>policy_question_answering</td><td>4</td><td>0.806</td></tr><tr><td>Hybrid RAG</td><td>policy_update_adaptation</td><td>1</td><td>0.883</td></tr><tr><td>Hybrid RAG</td><td>risk_classification</td><td>6</td><td>0.768</td></tr><tr><td>Keyword Search</td><td>compliance_check</td><td>8</td><td>0.788</td></tr><tr><td>Keyword Search</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.790</td></tr><tr><td>Keyword Search</td><td>human_review_routing</td><td>4</td><td>0.725</td></tr><tr><td>Keyword Search</td><td>policy_conflict_detection</td><td>4</td><td>0.729</td></tr><tr><td>Keyword Search</td><td>policy_question_answering</td><td>4</td><td>0.794</td></tr><tr><td>Keyword Search</td><td>policy_update_adaptation</td><td>1</td><td>0.883</td></tr><tr><td>Keyword Search</td><td>risk_classification</td><td>6</td><td>0.756</td></tr><tr><td>Policy-as-Prompt</td><td>compliance_check</td><td>8</td><td>0.791</td></tr><tr><td>Policy-as-Prompt</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.806</td></tr><tr><td>Policy-as-Prompt</td><td>human_review_routing</td><td>4</td><td>0.730</td></tr><tr><td>Policy-as-Prompt</td><td>policy_conflict_detection</td><td>4</td><td>0.742</td></tr><tr><td>Policy-as-Prompt</td><td>policy_question_answering</td><td>4</td><td>0.831</td></tr><tr><td>Policy-as-Prompt</td><td>policy_update_adaptation</td><td>1</td><td>0.883</td></tr><tr><td>Policy-as-Prompt</td><td>risk_classification</td><td>6</td><td>0.785</td></tr><tr><td>Policy-as-Skill</td><td>compliance_check</td><td>8</td><td>0.801</td></tr><tr><td>Policy-as-Skill</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.792</td></tr><tr><td>Policy-as-Skill</td><td>human_review_routing</td><td>4</td><td>0.738</td></tr><tr><td>Policy-as-Skill</td><td>policy_conflict_detection</td><td>4</td><td>0.743</td></tr><tr><td>Policy-as-Skill</td><td>policy_question_answering</td><td>4</td><td>0.800</td></tr><tr><td>Policy-as-Skill</td><td>policy_update_adaptation</td><td>1</td><td>0.888</td></tr><tr><td>Policy-as-Skill</td><td>risk_classification</td><td>6</td><td>0.781</td></tr><tr><td>Policy-as-Skill No Audit</td><td>compliance_check</td><td>8</td><td>0.780</td></tr><tr><td>Policy-as-Skill No Audit</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.772</td></tr><tr><td>Policy-as-Skill No Audit</td><td>human_review_routing</td><td>4</td><td>0.718</td></tr><tr><td>Policy-as-Skill No Audit</td><td>policy_conflict_detection</td><td>4</td><td>0.723</td></tr><tr><td>Policy-as-Skill No Audit</td><td>policy_question_answering</td><td>4</td><td>0.780</td></tr><tr><td>Policy-as-Skill No Audit</td><td>policy_update_adaptation</td><td>1</td><td>0.868</td></tr><tr><td>Policy-as-Skill No Audit</td><td>risk_classification</td><td>6</td><td>0.761</td></tr><tr><td>Standard RAG</td><td>compliance_check</td><td>8</td><td>0.791</td></tr><tr><td>Standard RAG</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.806</td></tr><tr><td>Standard RAG</td><td>human_review_routing</td><td>4</td><td>0.730</td></tr><tr><td>Standard RAG</td><td>policy_conflict_detection</td><td>4</td><td>0.742</td></tr><tr><td>Standard RAG</td><td>policy_question_answering</td><td>4</td><td>0.831</td></tr><tr><td>Standard RAG</td><td>policy_update_adaptation</td><td>1</td><td>0.883</td></tr><tr><td>Standard RAG</td><td>risk_classification</td><td>6</td><td>0.785</td></tr><tr><td>Structured Policy-as-Prompt</td><td>compliance_check</td><td>8</td><td>0.791</td></tr><tr><td>Structured Policy-as-Prompt</td><td>evidence_grounded_recommendation</td><td>5</td><td>0.786</td></tr><tr><td>Structured Policy-as-Prompt</td><td>human_review_routing</td><td>4</td><td>0.730</td></tr><tr><td>Structured Policy-as-Prompt</td><td>policy_conflict_detection</td><td>4</td><td>0.742</td></tr><tr><td>Structured Policy-as-Prompt</td><td>policy_question_answering</td><td>4</td><td>0.806</td></tr><tr><td>Structured Policy-as-Prompt</td><td>policy_update_adaptation</td><td>1</td><td>0.883</td></tr><tr><td>Structured Policy-as-Prompt</td><td>risk_classification</td><td>6</td><td>0.768</td></tr></tbody></table>
+</section>
+
+<section>
+<h2>G. Example Policy-as-Skill Trace</h2>
+<p><b>Question:</b> Can a department upload non-anonymized citizen images to an external AI cloud service during a test phase?</p>
+<p><b>Selected skill:</b> EvidenceRecommendationSkill | <b>Decision:</b> not_allowed | <b>Human review:</b> True</p>
+<p><b>Reasoning summary:</b> Applied EvidenceRecommendationSkill with scoped retrieval and deterministic policy controls.</p>
+<h3>Audit record excerpt</h3>
+<pre>{
+  &quot;task_id&quot;: &quot;T001&quot;,
+  &quot;method&quot;: &quot;Policy-as-Skill&quot;,
+  &quot;selected_skill&quot;: &quot;EvidenceRecommendationSkill&quot;,
+  &quot;policy_skill_version&quot;: &quot;skill-v2.1&quot;,
+  &quot;prompt_hash&quot;: &quot;565f5b613157&quot;,
+  &quot;policy_hashes&quot;: [
+    &quot;eu_ai_act_sample.md@v1:f29171746bfb&quot;,
+    &quot;internal_department_policy_sample.md@v1:cb6e471397d7&quot;,
+    &quot;model_governance_sample.md@v1:300c0149e564&quot;,
+    &quot;pilot_policy_v1.md@v1:5d5786af0647&quot;,
+    &quot;pilot_policy_v2.md@v2:3b3126d8d530&quot;,
+    &quot;public_sector_guideline_sample.md@v1:f52cd17a0bcc&quot;
+  ],
+  &quot;citations&quot;: [
+    &quot;public_sector_guideline_sample.md#data-protection@v1&quot;,
+    &quot;pilot_policy_v1.md#pilot-policy-v1@v1&quot;,
+    &quot;model_governance_sample.md#access-control@v1&quot;
+  ],
+  &quot;validation&quot;: {
+    &quot;valid_citations&quot;: [
+      &quot;public_sector_guideline_sample.md#data-protection@v1&quot;,
+      &quot;pilot_policy_v1.md#pilot-policy-v1@v1&quot;,
+      &quot;model_governance_sample.md#access-control@v1&quot;
+    ],
+    &quot;invalid_citations&quot;: [],
+    &quot;missing_required_evidence_tags&quot;: [],
+    &quot;citation_validation_applied&quot;: true,
+    &quot;review_by_trigger&quot;: true,
+    &quot;schema_valid&quot;: true
+  }
+}</pre>
+<h3>Retrieved evidence excerpt</h3>
+<pre>[
   {
     &quot;source&quot;: &quot;public_sector_guideline_sample.md&quot;,
     &quot;chunk_id&quot;: &quot;data-protection&quot;,
-    &quot;text&quot;: &quot;## data-protection\nPersonal data must be minimized, anonymized where possible, and processed only with a documented legal basis. Non-anonymized citizen images, health data, or benefits data require data protection review before external processing.&quot;,
-    &quot;score&quot;: 0.6449723828886663
+    &quot;citation_id&quot;: &quot;public_sector_guideline_sample.md#data-protection@v1&quot;,
+    &quot;version&quot;: &quot;v1&quot;,
+    &quot;sha256&quot;: &quot;f52cd17a0bcc&quot;,
+    &quot;tags&quot;: [
+      &quot;data-protection&quot;,
+      &quot;external-cloud&quot;,
+      &quot;high-risk-ai&quot;,
+      &quot;human-review&quot;
+    ],
+    &quot;score&quot;: 10.887183,
+    &quot;text&quot;: &quot;## data-protection\nPersonal data must be minimized, anonymized where possible, and processed only with a documented legal basis. Non-anonymized citizen images, health data, or benefits data require data protection review before external processing.&quot;
   },
   {
-    &quot;source&quot;: &quot;internal_department_policy_sample.md&quot;,
-    &quot;chunk_id&quot;: &quot;chunk-0&quot;,
-    &quot;text&quot;: &quot;# Synthetic Internal Department AI Policy&quot;,
-    &quot;score&quot;: 0.5335916405788507
+    &quot;source&quot;: &quot;pilot_policy_v1.md&quot;,
+    &quot;chunk_id&quot;: &quot;pilot-policy-v1&quot;,
+    &quot;citation_id&quot;: &quot;pilot_policy_v1.md#pilot-policy-v1@v1&quot;,
+    &quot;version&quot;: &quot;v1&quot;,
+    &quot;sha256&quot;: &quot;5d5786af0647&quot;,
+    &quot;tags&quot;: [
+      &quot;accountability&quot;,
+      &quot;data-protection&quot;,
+      &quot;external-cloud&quot;,
+      &quot;high-risk-ai&quot;,
+      &quot;human-review&quot;,
+      &quot;pilot-deployment&quot;,
+      &quot;pilot-policy-v2&quot;,
+      &quot;policy-conflict&quot;
+    ],
+    &quot;score&quot;: 10.283187,
+    &quot;text&quot;: &quot;## pilot-policy-v1\nA limited AI pilot may use external generative AI services for non-sensitive administrative content when a pilot owner is named and rollback criteria are documented. Sensitive personal data and citizen images are excluded unless separate approval exists.&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model_governance_sample.md&quot;,
+    &quot;chunk_id&quot;: &quot;access-control&quot;,
+    &quot;citation_id&quot;: &quot;model_governance_sample.md#access-control@v1&quot;,
+    &quot;version&quot;: &quot;v1&quot;,
+    &quot;sha256&quot;: &quot;300c0149e564&quot;,
+    &quot;tags&quot;: [
+      &quot;access-control&quot;,
+      &quot;data-protection&quot;,
+      &quot;external-cloud&quot;,
+      &quot;human-review&quot;,
+      &quot;policy-conflict&quot;
+    ],
+    &quot;score&quot;: 9.579481,
+    &quot;text&quot;: &quot;## access-control\nPolicy repositories may contain restricted documents. Retrieval must respect user role, department scope, and document sensitivity. Sensitive personal data must not be sent to an external service unless there is explicit approval and documented safeguards.&quot;
   }
-]</pre></section>
-<section><h2>G. Failure Analysis</h2><p>Common failures include missing citations, incomplete policy-reference recall, weak reasoning summaries, and absent audit fields.</p><pre>{
-  &quot;Keyword Search&quot;: [],
-  &quot;Standard RAG&quot;: [],
-  &quot;Policy-as-Prompt&quot;: [],
-  &quot;Policy-as-Skill&quot;: []
-}</pre></section>
-<section><h2>H. Governance and Auditability Analysis</h2><p>Policy-as-Skill binds each decision to a selected skill, evidence, human-review flag, reasoning summary, decision status, timestamps, and evaluation metrics.</p></section>
-<section><h2>I. Paper-Oriented Conclusion</h2><p>Policy-as-Skill improves not only answer quality, but also governance readiness, traceability, and auditability compared with prompt-only and retrieval-only baselines.</p></section>
-<script>mermaid.initialize({startOnLoad:true}); const labels=["Keyword Search", "Standard RAG", "Policy-as-Prompt", "Policy-as-Skill"]; function chart(id,label,data){new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{label,data,backgroundColor:'#3156d4'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}})} chart('overall','Overall Score',[0.854, 0.885, 0.893, 0.893]); chart('trace','Traceability',[1.0, 1.0, 1.0, 1.0]); chart('citation','Citation Coverage',[1.0, 1.0, 1.0, 1.0]); chart('latency','Latency Seconds',[0.0, 0.405, 0.403, 0.403]);</script>
+]</pre>
+</section>
+
+<section>
+<h2>H. Failure Analysis</h2>
+<p>Failures are rows below the configured score threshold or runtime exceptions. For paper analysis, inspect the trace file to separate retrieval failures, generation failures, citation failures, and governance failures.</p>
+<table><thead><tr><th>Method</th><th>Failures</th><th>Top Reason</th></tr></thead><tbody><tr><td>Direct LLM</td><td>32</td><td>below quality threshold: 32</td></tr><tr><td>Keyword Search</td><td>0</td><td></td></tr><tr><td>Standard RAG</td><td>0</td><td></td></tr><tr><td>Hybrid RAG</td><td>0</td><td></td></tr><tr><td>Policy-as-Prompt</td><td>0</td><td></td></tr><tr><td>Structured Policy-as-Prompt</td><td>0</td><td></td></tr><tr><td>Policy-as-Skill No Audit</td><td>0</td><td></td></tr><tr><td>Policy-as-Skill</td><td>0</td><td></td></tr></tbody></table>
+<h3>Worst metric rows</h3>
+<table><thead><tr><th>Task Id</th><th>Task Type</th><th>Method</th><th>Overall Score</th><th>Citation Precision</th><th>Policy Ref Recall</th><th>Evidence Faithfulness</th><th>Governance Readiness Score</th></tr></thead><tbody><tr><td>T019</td><td>policy_question_answering</td><td>Direct LLM</td><td>0.125405</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.470536</td></tr><tr><td>T013</td><td>policy_question_answering</td><td>Direct LLM</td><td>0.132328</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.470536</td></tr><tr><td>T023</td><td>evidence_grounded_recommendation</td><td>Direct LLM</td><td>0.132328</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.470536</td></tr><tr><td>T001</td><td>policy_question_answering</td><td>Direct LLM</td><td>0.133482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.620536</td></tr><tr><td>T007</td><td>policy_question_answering</td><td>Direct LLM</td><td>0.133482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.620536</td></tr><tr><td>T011</td><td>evidence_grounded_recommendation</td><td>Direct LLM</td><td>0.133482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.620536</td></tr><tr><td>T017</td><td>evidence_grounded_recommendation</td><td>Direct LLM</td><td>0.133482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.620536</td></tr><tr><td>T021</td><td>risk_classification</td><td>Direct LLM</td><td>0.133482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.620536</td></tr><tr><td>G0001</td><td>evidence_grounded_recommendation</td><td>Direct LLM</td><td>0.133482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.620536</td></tr><tr><td>G0006</td><td>policy_update_adaptation</td><td>Direct LLM</td><td>0.135482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.520536</td></tr><tr><td>T005</td><td>evidence_grounded_recommendation</td><td>Direct LLM</td><td>0.136482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.470536</td></tr><tr><td>T004</td><td>policy_conflict_detection</td><td>Direct LLM</td><td>0.139482</td><td>0.0</td><td>0.0</td><td>0.0</td><td>0.620536</td></tr></tbody></table>
+</section>
+
+<section>
+<h2>I. Reproducibility Manifest</h2>
+<p><a class='pill' href='metrics.csv'>metrics.csv</a><a class='pill' href='metrics.json'>metrics.json</a><a class='pill' href='traces.jsonl'>traces.jsonl</a><a class='pill' href='failures.json'>failures.json</a><a class='pill' href='manifest.json'>manifest.json</a><a class='pill' href='benchmark_generated.jsonl'>benchmark_generated.jsonl</a></p>
+<pre>{
+  &quot;timestamp&quot;: &quot;2026-07-02T13:15:12Z&quot;,
+  &quot;platform&quot;: &quot;Linux-4.4.0-x86_64-with-glibc2.41&quot;,
+  &quot;python&quot;: &quot;3.13.5&quot;,
+  &quot;ollama_base_url&quot;: &quot;http://host.docker.internal:11434&quot;,
+  &quot;ollama_model&quot;: &quot;gemma4:e2b&quot;,
+  &quot;ollama_enabled&quot;: true,
+  &quot;ollama_available&quot;: false,
+  &quot;seed&quot;: 7,
+  &quot;benchmark_path&quot;: &quot;/mnt/data/policy-as-skill-upgraded/result/benchmark_generated.jsonl&quot;,
+  &quot;benchmark_requested_size&quot;: 120,
+  &quot;tasks_evaluated&quot;: 32,
+  &quot;methods&quot;: [
+    &quot;Direct LLM&quot;,
+    &quot;Keyword Search&quot;,
+    &quot;Standard RAG&quot;,
+    &quot;Hybrid RAG&quot;,
+    &quot;Policy-as-Prompt&quot;,
+    &quot;Structured Policy-as-Prompt&quot;,
+    &quot;Policy-as-Skill No Audit&quot;,
+    &quot;Policy-as-Skill&quot;
+  ],
+  &quot;policy_documents&quot;: [
+    {
+      &quot;source&quot;: &quot;eu_ai_act_sample.md&quot;,
+      &quot;version&quot;: &quot;v1&quot;,
+      &quot;sha256&quot;: &quot;f29171746bfb1a553c849d14412294cf83c3e94b729323f71351b29c1491abaa&quot;,
+      &quot;chars&quot;: 934
+    },
+    {
+      &quot;source&quot;: &quot;internal_department_policy_sample.md&quot;,
+      &quot;version&quot;: &quot;v1&quot;,
+      &quot;sha256&quot;: &quot;cb6e471397d7c11c2bf80c7cdeeeda1d7b214e2b0211bcdf004d89050bd6b928&quot;,
+      &quot;chars&quot;: 767
+    },
+    {
+      &quot;source&quot;: &quot;model_governance_sample.md&quot;,
+      &quot;version&quot;: &quot;v1&quot;,
+      &quot;sha256&quot;: &quot;300c0149e564fd8a8ceca571d86fe65f24cb791a3746773812cab60ee015cb07&quot;,
+      &quot;chars&quot;: 1120
+    },
+    {
+      &quot;source&quot;: &quot;pilot_policy_v1.md&quot;,
+      &quot;version&quot;: &quot;v1&quot;,
+      &quot;sha256&quot;: &quot;5d5786af0647e14d84ad61806cb2eeb43e7b15e9761090d774b0228691c9182d&quot;,
+      &quot;chars&quot;: 506
+    },
+    {
+      &quot;source&quot;: &quot;pilot_policy_v2.md&quot;,
+      &quot;version&quot;: &quot;v2&quot;,
+      &quot;sha256&quot;: &quot;3b3126d8d530275cfc5b3ee2ed3b9c16d53dfd975ec7705193939799d33ccaf0&quot;,
+      &quot;chars&quot;: 506
+    },
+    {
+      &quot;source&quot;: &quot;public_sector_guideline_sample.md&quot;,
+      &quot;version&quot;: &quot;v1&quot;,
+      &quot;sha256&quot;: &quot;f52cd17a0bcce57f7c82122e44606e802f87a46ef5d92ea87881a95f260da806&quot;,
+      &quot;chars&quot;: 845
+    }
+  ],
+  &quot;run_id&quot;: &quot;f9826e753bd1&quot;
+}</pre>
+</section>
+
+<section>
+<h2>J. Paper-Oriented Conclusion</h2>
+<p>This platform operationalizes the central research claim: in regulated enterprises, AI quality is not only answer accuracy. A policy-aware agent must be traceable, reviewable, version-aware, evidence-grounded, and auditable. The <b>Policy-as-Skill</b> method is designed to make these properties first-class measurable outputs rather than informal prompt instructions.</p>
+</section>
+</main>
 </body></html>

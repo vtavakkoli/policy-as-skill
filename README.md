@@ -1,91 +1,203 @@
 # Policy-as-Skill
 
-**Policy-as-Skill: Governed Agentic AI for Traceable Policy-Aware Decision Support** is a research prototype for transforming regulations, public-sector rules, and internal guidelines into reusable, governed, auditable agentic AI skills.
+**Policy-as-Skill** is a research prototype for governed Agentic AI in regulated enterprises and public-sector workflows.
 
-The prototype compares four methods:
+It extends the idea of **Policy-as-Prompt** by treating policies, regulations, and internal guidelines as reusable, governed, versioned, and auditable agent capabilities rather than only as text inserted into prompts.
 
-1. **Keyword Search Baseline** — simple lexical policy matching.
-2. **Standard RAG** — TF-IDF retrieval plus LLM generation.
-3. **Policy-as-Prompt** — policy context encoded directly into structured prompts.
-4. **Policy-as-Skill** — policies represented as governed, reusable, auditable skills combining trusted retrieval, task planning, reasoning, human-review routing, and evaluation.
+> Paper direction: **Policy-as-Skill: Governed Agentic AI for Traceable Policy-Aware Decision Support**
 
-This distinction is central to the paper idea: **Policy-as-Prompt** treats policy as text inside a prompt, while **Policy-as-Skill** treats policy as a reusable, versionable agent capability with traceability and governance metadata.
+## What this prototype implements
 
-## Architecture
+The platform runs a local benchmark and compares several methods:
 
-Policy Repository → Retrieval → Skill Registry → Agent Planner → Ollama Reasoning → Human Review → Audit Trail → Evaluation → Report
+1. **Direct LLM** — no retrieval, weak baseline.
+2. **Keyword Search** — lexical retrieval and extractive decision.
+3. **Standard RAG** — retrieved policy chunks + LLM answer.
+4. **Hybrid RAG** — BM25-like retrieval plus keyword/tag scoring.
+5. **Policy-as-Prompt** — policy evidence directly encoded in prompt.
+6. **Structured Policy-as-Prompt** — policy artifacts encoded as structured JSON.
+7. **Policy-as-Skill No Audit** — ablation with skill selection but without strict validation.
+8. **Policy-as-Skill** — full method with skill registry, scoped retrieval, required evidence checks, citation validation, human-review routing, policy hashes, and audit trace.
 
-The complete experiment runs locally with Docker Compose. **Ollama runs outside Docker on the host machine**, and the container calls it through `http://host.docker.internal:11434`.
+The run generates:
+
+```text
+result/report.html
+result/metrics.csv
+result/metrics.json
+result/traces.jsonl
+result/failures.json
+result/manifest.json
+result/benchmark_generated.jsonl
+```
+
+## Core distinction
+
+### Policy-as-Prompt
+
+Policies are encoded directly as prompt text.
+
+### Policy-as-Skill
+
+Policies become reusable governed agent capabilities:
+
+```text
+Policy knowledge
+→ trusted retrieval
+→ skill selection
+→ contextual reasoning
+→ validation
+→ human review routing
+→ audit trail
+→ evaluation
+→ policy improvement
+```
+
+Each `PolicySkill` includes:
+
+```text
+name
+version
+retrieval scope
+risk level
+allowed actions
+human-review triggers
+required evidence tags
+decision schema
+audit fields
+failure policy
+prompt template
+```
+
+## Repository structure
+
+```text
+policy-as-skill/
+  data/
+    policies/                 synthetic policy documents
+    tasks/                    curated seed tasks
+  src/policy_as_skill/
+    main.py                   main experiment runner
+    agents.py                 method implementations
+    skills.py                 PolicySkill registry
+    retrieval.py              BM25-like, keyword, hybrid retrieval
+    evaluators.py             research metrics
+    benchmark_generator.py    deterministic synthetic benchmark generator
+    report_generator.py       self-contained HTML report
+    ollama_client.py          host Ollama REST client
+  result/                     generated outputs
+  tests/                      lightweight tests
+```
 
 ## Prerequisites
 
-- Docker and Docker Compose
-- Python is only required if running tests outside Docker
-- Ollama installed on the host machine
+Install Ollama on the host machine. Ollama is **not** started inside Docker.
 
-## Install and run Ollama
-
-Install Ollama from <https://ollama.com/download>, then pull and serve the required model on the host:
+Pull the test model:
 
 ```bash
 ollama pull gemma4:e2b
+```
+
+Start Ollama on the host:
+
+```bash
 ollama serve
 ```
 
-Do not run Ollama inside Docker.
+The Docker container calls host Ollama using:
 
-## Configuration
-
-Copy the example environment file if desired:
-
-```bash
-cp .env.example .env
+```text
+http://host.docker.internal:11434
 ```
 
-Default values. The timeout is intentionally longer than the initial model load path because Ollama can take more than one second to load a model before generating the first token:
+Linux compatibility is enabled in `docker-compose.yml`:
 
-```env
-OLLAMA_BASE_URL=http://host.docker.internal:11434
-OLLAMA_MODEL=gemma4:e2b
-OLLAMA_TIMEOUT_SECONDS=120
+```yaml
+extra_hosts:
+  - "host.docker.internal:host-gateway"
 ```
 
-## Run the experiment
+## Run
 
 ```bash
 docker compose up --build
 ```
 
-or:
-
-```bash
-docker compose run --rm policy-as-skill
-```
-
-The main entry point is `src/policy_as_skill/main.py`. The application also writes INFO/WARNING/ERROR logs to stdout so you can see startup configuration, loaded inputs, per-task progress, Ollama request attempts, model errors, and report generation while the system runs. All outputs are written to `result/`, including the final report:
+Open:
 
 ```text
 result/report.html
 ```
 
-## Outputs
+## Fast offline smoke test
 
-- `result/report.html` — polished self-contained paper-oriented HTML report.
-- `result/metrics.csv` — per-task and per-method metrics.
-- `result/metrics.json` — aggregate and detailed metrics.
-- `result/traces.jsonl` — prompts, outputs, retrieved evidence, decisions, Ollama request attempts/errors, and audit traces.
-- `result/failures.json` — failure cases grouped by method.
+To run without Ollama and use deterministic offline outputs:
+
+```bash
+OLLAMA_ENABLED=false MAX_TASKS=8 docker compose up --build
+```
+
+This is useful for testing Docker, metrics, traces, and report generation.
+
+## Larger research run
+
+For a paper-style run, increase the benchmark size and run all generated tasks:
+
+```bash
+BENCHMARK_SIZE=300 MAX_TASKS=0 docker compose up --build
+```
+
+`MAX_TASKS=0` means evaluate all generated tasks.
+
+For local debugging without Docker:
+
+```bash
+PYTHONPATH=src OLLAMA_ENABLED=false MAX_TASKS=8 python -m policy_as_skill.main
+```
 
 ## Metrics
 
-- **answer_similarity**: token-overlap similarity against expected answer.
-- **citation_coverage**: whether generated evidence/citations include source identifiers.
-- **policy_ref_recall**: fraction of expected policy references found in evidence or answer text.
-- **traceability_score**: transparent score for logging source, reasoning, decision, and review flag.
-- **human_review_correctness**: agreement with expected human-review routing heuristics.
-- **latency_seconds**: wall-clock execution time per method/task.
-- **overall_score**: weighted average of quality, grounding, traceability, and routing metrics.
+The platform evaluates more than answer quality:
 
-## Research framing
+| Metric | Meaning |
+|---|---|
+| `answer_similarity` | Token overlap with expected answer; used only after generation. |
+| `citation_coverage` | Whether the answer contains citations. |
+| `citation_precision` | Whether cited policy IDs were actually retrieved. |
+| `policy_ref_recall` | Whether expected policy references appear in answer/evidence/citations. |
+| `evidence_faithfulness` | Whether answer tokens are supported by retrieved evidence. |
+| `unsupported_claim_rate` | Approximate share of answer content not grounded in evidence. |
+| `contradiction_rate` | Decision mismatch against expected decision. |
+| `decision_accuracy` | One minus contradiction rate. |
+| `traceability_score` | Whether evidence, decision, review flag, validation, hashes, and prompt hash exist. |
+| `human_review_correctness` | Whether review routing matches expected review need. |
+| `audit_completeness` | Completeness of audit fields. |
+| `governance_readiness_score` | Weighted governance score using traceability, audit, citation precision, review correctness, and update adaptation. |
+| `update_adaptation_score` | Whether current policy-version tasks cite/use the expected version. |
+| `overall_score` | Weighted research score across correctness, citations, faithfulness, decision, traceability, and governance. |
 
-This repository is a research prototype for a future IEEE/ACM paper. It demonstrates how policy-aware decision support can move beyond prompt engineering toward governed agentic skills that are reusable, auditable, and measurable.
+## No ground-truth leakage
+
+The platform is designed so that `expected_answer` is used **only** by `evaluators.py`.
+
+`agents.py` never uses expected answers during generation. If Ollama is unavailable, it creates deterministic offline outputs from retrieved evidence only.
+
+## Research extensions still recommended before A* submission
+
+This repository is now a stronger research platform, but an A* paper still needs:
+
+- expert-labeled policy tasks,
+- multiple real policy domains,
+- stronger baselines with rerankers and commercial LLMs,
+- statistical tests and confidence intervals,
+- manual citation-faithfulness annotation,
+- external validity through a public-sector or enterprise case study.
+
+## Scientific framing
+
+The central claim is:
+
+> In regulated enterprises, AI quality is not only answer accuracy. A policy-aware agent must be traceable, reviewable, version-aware, evidence-grounded, and auditable.
+
+Policy-as-Skill makes these properties first-class measurable outputs.

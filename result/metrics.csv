@@ -1,97 +1,257 @@
-task_id,task_type,method,answer_similarity,citation_coverage,policy_ref_recall,traceability_score,human_review_correctness,latency_seconds,overall_score
-T001,policy_question_answering,Keyword Search,0.7083333333333334,1.0,0.6666666666666666,1.0,1.0,0.0003682779999962804,0.8437499999999999
-T001,policy_question_answering,Standard RAG,0.7083333333333334,1.0,0.6666666666666666,1.0,1.0,0.41059506200002716,0.8437499999999999
-T001,policy_question_answering,Policy-as-Prompt,0.7391304347826086,1.0,0.6666666666666666,1.0,1.0,0.4027533800000356,0.8514492753623187
-T001,policy_question_answering,Policy-as-Skill,0.7391304347826086,1.0,0.6666666666666666,1.0,1.0,0.40315301099997214,0.8514492753623187
-T002,compliance_check,Keyword Search,0.72,1.0,0.6666666666666666,1.0,1.0,0.00021041100001184532,0.8466666666666666
-T002,compliance_check,Standard RAG,0.72,1.0,0.6666666666666666,1.0,1.0,0.4028939359999981,0.8466666666666666
-T002,compliance_check,Policy-as-Prompt,0.75,1.0,0.6666666666666666,1.0,1.0,0.40307767499996316,0.8541666666666666
-T002,compliance_check,Policy-as-Skill,0.75,1.0,0.6666666666666666,1.0,1.0,0.4025530000000117,0.8541666666666666
-T003,risk_classification,Keyword Search,0.782608695652174,1.0,1.0,1.0,1.0,0.00022119300001577358,0.9456521739130436
-T003,risk_classification,Standard RAG,0.782608695652174,1.0,1.0,1.0,1.0,0.40303561700000046,0.9456521739130436
-T003,risk_classification,Policy-as-Prompt,0.8181818181818182,1.0,1.0,1.0,1.0,0.40242319899999757,0.9545454545454545
-T003,risk_classification,Policy-as-Skill,0.8181818181818182,1.0,1.0,1.0,1.0,0.40270267199997534,0.9545454545454545
-T004,policy_conflict_detection,Keyword Search,0.75,1.0,0.0,1.0,1.0,0.00027172499994776445,0.6875
-T004,policy_conflict_detection,Standard RAG,0.75,1.0,1.0,1.0,1.0,0.40859970999997586,0.9374999999999999
-T004,policy_conflict_detection,Policy-as-Prompt,0.7777777777777778,1.0,1.0,1.0,1.0,0.4026176940000141,0.9444444444444445
-T004,policy_conflict_detection,Policy-as-Skill,0.7777777777777778,1.0,1.0,1.0,1.0,0.40270333200004416,0.9444444444444445
-T005,evidence_grounded_recommendation,Keyword Search,0.6666666666666666,1.0,0.5,1.0,1.0,0.0002114960000199062,0.7916666666666666
-T005,evidence_grounded_recommendation,Standard RAG,0.6666666666666666,1.0,0.5,1.0,1.0,0.4027976300000091,0.7916666666666666
-T005,evidence_grounded_recommendation,Policy-as-Prompt,0.7058823529411765,1.0,0.5,1.0,1.0,0.40243928000001006,0.801470588235294
-T005,evidence_grounded_recommendation,Policy-as-Skill,0.7058823529411765,1.0,0.5,1.0,1.0,0.4026306599999998,0.801470588235294
-T006,human_review_routing,Keyword Search,0.6666666666666666,1.0,1.0,1.0,1.0,0.00019223800001100244,0.9166666666666666
-T006,human_review_routing,Standard RAG,0.6666666666666666,1.0,1.0,1.0,1.0,0.40256299399999307,0.9166666666666666
-T006,human_review_routing,Policy-as-Prompt,0.7,1.0,1.0,1.0,1.0,0.40303551900001366,0.9249999999999999
-T006,human_review_routing,Policy-as-Skill,0.7,1.0,1.0,1.0,1.0,0.40275830699999915,0.9249999999999999
-T007,policy_question_answering,Keyword Search,0.5882352941176471,1.0,1.0,1.0,1.0,0.000290280999990955,0.8970588235294118
-T007,policy_question_answering,Standard RAG,0.5882352941176471,1.0,1.0,1.0,1.0,0.40274719800004277,0.8970588235294118
-T007,policy_question_answering,Policy-as-Prompt,0.625,1.0,1.0,1.0,1.0,0.4026736160000155,0.9062499999999999
-T007,policy_question_answering,Policy-as-Skill,0.625,1.0,1.0,1.0,1.0,0.40264961299999413,0.9062499999999999
-T008,compliance_check,Keyword Search,0.65,1.0,1.0,1.0,1.0,0.0001968359999864333,0.9125
-T008,compliance_check,Standard RAG,0.65,1.0,1.0,1.0,1.0,0.40326378200001045,0.9125
-T008,compliance_check,Policy-as-Prompt,0.6842105263157895,1.0,1.0,1.0,1.0,0.40323826299999155,0.9210526315789475
-T008,compliance_check,Policy-as-Skill,0.6842105263157895,1.0,1.0,1.0,1.0,0.4039919199999531,0.9210526315789475
-T009,risk_classification,Keyword Search,0.7391304347826086,1.0,0.5,1.0,1.0,0.00033825500003104025,0.8097826086956522
-T009,risk_classification,Standard RAG,0.7391304347826086,1.0,0.5,1.0,1.0,0.4026036019999992,0.8097826086956522
-T009,risk_classification,Policy-as-Prompt,0.7727272727272727,1.0,0.5,1.0,1.0,0.403102371999978,0.8181818181818182
-T009,risk_classification,Policy-as-Skill,0.7727272727272727,1.0,0.5,1.0,1.0,0.40307815699998173,0.8181818181818182
-T010,policy_conflict_detection,Keyword Search,0.72,1.0,1.0,1.0,1.0,0.000288303999980144,0.93
-T010,policy_conflict_detection,Standard RAG,0.72,1.0,1.0,1.0,1.0,0.4044266839999864,0.93
-T010,policy_conflict_detection,Policy-as-Prompt,0.75,1.0,1.0,1.0,1.0,0.40277805700003455,0.9374999999999999
-T010,policy_conflict_detection,Policy-as-Skill,0.75,1.0,1.0,1.0,1.0,0.40261164499997903,0.9374999999999999
-T011,evidence_grounded_recommendation,Keyword Search,0.7083333333333334,1.0,0.6666666666666666,1.0,1.0,0.0002655100000197308,0.8437499999999999
-T011,evidence_grounded_recommendation,Standard RAG,0.7083333333333334,1.0,0.6666666666666666,1.0,1.0,0.40266857799997524,0.8437499999999999
-T011,evidence_grounded_recommendation,Policy-as-Prompt,0.7391304347826086,1.0,0.6666666666666666,1.0,1.0,0.4029815960000178,0.8514492753623187
-T011,evidence_grounded_recommendation,Policy-as-Skill,0.7391304347826086,1.0,0.6666666666666666,1.0,1.0,0.40295582000004515,0.8514492753623187
-T012,human_review_routing,Keyword Search,0.72,1.0,0.6666666666666666,1.0,1.0,0.00029093299997384747,0.8466666666666666
-T012,human_review_routing,Standard RAG,0.72,1.0,0.6666666666666666,1.0,1.0,0.4029280020000101,0.8466666666666666
-T012,human_review_routing,Policy-as-Prompt,0.75,1.0,0.6666666666666666,1.0,1.0,0.4026259190000019,0.8541666666666666
-T012,human_review_routing,Policy-as-Skill,0.75,1.0,0.6666666666666666,1.0,1.0,0.40252865799999427,0.8541666666666666
-T013,policy_question_answering,Keyword Search,0.782608695652174,1.0,1.0,1.0,1.0,0.00021345599998312537,0.9456521739130436
-T013,policy_question_answering,Standard RAG,0.782608695652174,1.0,1.0,1.0,1.0,0.4027610350000259,0.9456521739130436
-T013,policy_question_answering,Policy-as-Prompt,0.8181818181818182,1.0,1.0,1.0,1.0,0.4035842450000473,0.9545454545454545
-T013,policy_question_answering,Policy-as-Skill,0.8181818181818182,1.0,1.0,1.0,1.0,0.4028672900000174,0.9545454545454545
-T014,compliance_check,Keyword Search,0.75,1.0,0.0,1.0,1.0,0.0002058399999782523,0.6875
-T014,compliance_check,Standard RAG,0.75,1.0,1.0,1.0,1.0,0.42582420399998,0.9374999999999999
-T014,compliance_check,Policy-as-Prompt,0.7777777777777778,1.0,1.0,1.0,1.0,0.40295890200002304,0.9444444444444445
-T014,compliance_check,Policy-as-Skill,0.7777777777777778,1.0,1.0,1.0,1.0,0.4028617660000009,0.9444444444444445
-T015,risk_classification,Keyword Search,0.6666666666666666,1.0,0.5,1.0,1.0,0.00036754899997504253,0.7916666666666666
-T015,risk_classification,Standard RAG,0.6666666666666666,1.0,0.5,1.0,1.0,0.4029346940000096,0.7916666666666666
-T015,risk_classification,Policy-as-Prompt,0.7058823529411765,1.0,0.5,1.0,1.0,0.4028438149999829,0.801470588235294
-T015,risk_classification,Policy-as-Skill,0.7058823529411765,1.0,0.5,1.0,1.0,0.40280028799998036,0.801470588235294
-T016,policy_conflict_detection,Keyword Search,0.6666666666666666,1.0,1.0,1.0,1.0,0.00027938099998436883,0.9166666666666666
-T016,policy_conflict_detection,Standard RAG,0.6666666666666666,1.0,1.0,1.0,1.0,0.4122687039999846,0.9166666666666666
-T016,policy_conflict_detection,Policy-as-Prompt,0.7,1.0,1.0,1.0,1.0,0.4028766540000106,0.9249999999999999
-T016,policy_conflict_detection,Policy-as-Skill,0.7,1.0,1.0,1.0,1.0,0.40269986800001334,0.9249999999999999
-T017,evidence_grounded_recommendation,Keyword Search,0.5882352941176471,1.0,1.0,1.0,1.0,0.00028881100001854065,0.8970588235294118
-T017,evidence_grounded_recommendation,Standard RAG,0.5882352941176471,1.0,1.0,1.0,1.0,0.4027510779999943,0.8970588235294118
-T017,evidence_grounded_recommendation,Policy-as-Prompt,0.625,1.0,1.0,1.0,1.0,0.40254297699999597,0.9062499999999999
-T017,evidence_grounded_recommendation,Policy-as-Skill,0.625,1.0,1.0,1.0,1.0,0.40278449799995997,0.9062499999999999
-T018,human_review_routing,Keyword Search,0.65,1.0,1.0,1.0,1.0,0.0002291870000021845,0.9125
-T018,human_review_routing,Standard RAG,0.65,1.0,1.0,1.0,1.0,0.40287271400001146,0.9125
-T018,human_review_routing,Policy-as-Prompt,0.6842105263157895,1.0,1.0,1.0,1.0,0.40319305600002053,0.9210526315789475
-T018,human_review_routing,Policy-as-Skill,0.6842105263157895,1.0,1.0,1.0,1.0,0.402750167000022,0.9210526315789475
-T019,policy_question_answering,Keyword Search,0.7391304347826086,1.0,0.5,1.0,1.0,0.00025923700002294936,0.8097826086956522
-T019,policy_question_answering,Standard RAG,0.7391304347826086,1.0,0.5,1.0,1.0,0.40251185400001077,0.8097826086956522
-T019,policy_question_answering,Policy-as-Prompt,0.7727272727272727,1.0,0.5,1.0,1.0,0.4025402530000406,0.8181818181818182
-T019,policy_question_answering,Policy-as-Skill,0.7727272727272727,1.0,0.5,1.0,1.0,0.4097909000000186,0.8181818181818182
-T020,compliance_check,Keyword Search,0.72,1.0,1.0,1.0,1.0,0.0002068160000021635,0.93
-T020,compliance_check,Standard RAG,0.72,1.0,1.0,1.0,1.0,0.4025781830000028,0.93
-T020,compliance_check,Policy-as-Prompt,0.75,1.0,1.0,1.0,1.0,0.40277786299998297,0.9374999999999999
-T020,compliance_check,Policy-as-Skill,0.75,1.0,1.0,1.0,1.0,0.40260862799999586,0.9374999999999999
-T021,risk_classification,Keyword Search,0.7083333333333334,1.0,0.6666666666666666,1.0,1.0,0.00020929199996544412,0.8437499999999999
-T021,risk_classification,Standard RAG,0.7083333333333334,1.0,0.6666666666666666,1.0,1.0,0.40270175099999506,0.8437499999999999
-T021,risk_classification,Policy-as-Prompt,0.7391304347826086,1.0,0.6666666666666666,1.0,1.0,0.4026092599999629,0.8514492753623187
-T021,risk_classification,Policy-as-Skill,0.7391304347826086,1.0,0.6666666666666666,1.0,1.0,0.4027857490000315,0.8514492753623187
-T022,policy_conflict_detection,Keyword Search,0.72,1.0,0.6666666666666666,1.0,1.0,0.000203556999963439,0.8466666666666666
-T022,policy_conflict_detection,Standard RAG,0.72,1.0,0.6666666666666666,1.0,1.0,0.40282453000003215,0.8466666666666666
-T022,policy_conflict_detection,Policy-as-Prompt,0.75,1.0,0.6666666666666666,1.0,1.0,0.4032784460000016,0.8541666666666666
-T022,policy_conflict_detection,Policy-as-Skill,0.75,1.0,0.6666666666666666,1.0,1.0,0.402783525000018,0.8541666666666666
-T023,evidence_grounded_recommendation,Keyword Search,0.782608695652174,1.0,1.0,1.0,1.0,0.00023179900000513953,0.9456521739130436
-T023,evidence_grounded_recommendation,Standard RAG,0.782608695652174,1.0,1.0,1.0,1.0,0.402742021999984,0.9456521739130436
-T023,evidence_grounded_recommendation,Policy-as-Prompt,0.8181818181818182,1.0,1.0,1.0,1.0,0.40255764199997657,0.9545454545454545
-T023,evidence_grounded_recommendation,Policy-as-Skill,0.8181818181818182,1.0,1.0,1.0,1.0,0.402773609999997,0.9545454545454545
-T024,human_review_routing,Keyword Search,0.75,1.0,0.0,1.0,1.0,0.0002378390000217223,0.6875
-T024,human_review_routing,Standard RAG,0.75,1.0,1.0,1.0,1.0,0.4027682859999686,0.9374999999999999
-T024,human_review_routing,Policy-as-Prompt,0.7777777777777778,1.0,1.0,1.0,1.0,0.402640090000034,0.9444444444444445
-T024,human_review_routing,Policy-as-Skill,0.7777777777777778,1.0,1.0,1.0,1.0,0.4057867500000043,0.9444444444444445
+task_id,task_type,difficulty,policy_version,method,answer_similarity,citation_coverage,citation_precision,policy_ref_recall,evidence_faithfulness,unsupported_claim_rate,contradiction_rate,decision_accuracy,traceability_score,human_review_correctness,audit_completeness,governance_readiness_score,update_adaptation_score,latency_seconds,overall_score
+T001,policy_question_answering,medium,,Direct LLM,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000211,0.133482
+T001,policy_question_answering,medium,,Keyword Search,0.145833,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000752,0.841562
+T001,policy_question_answering,medium,,Standard RAG,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000663,0.834461
+T001,policy_question_answering,medium,,Hybrid RAG,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000896,0.834461
+T001,policy_question_answering,medium,,Policy-as-Prompt,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000574,0.834461
+T001,policy_question_answering,medium,,Structured Policy-as-Prompt,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000903,0.834461
+T001,policy_question_answering,medium,,Policy-as-Skill No Audit,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001225,0.819015
+T001,policy_question_answering,medium,,Policy-as-Skill,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.002174,0.839149
+T002,compliance_check,medium,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000151,0.140149
+T002,compliance_check,medium,,Keyword Search,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000565,0.750723
+T002,compliance_check,medium,,Standard RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000568,0.750723
+T002,compliance_check,medium,,Hybrid RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000819,0.750723
+T002,compliance_check,medium,,Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000537,0.750723
+T002,compliance_check,medium,,Structured Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000839,0.750723
+T002,compliance_check,medium,,Policy-as-Skill No Audit,0.22,1.0,1.0,1.0,0.976744,0.023256,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001169,0.736675
+T002,compliance_check,medium,,Policy-as-Skill,0.22,1.0,1.0,1.0,0.976744,0.023256,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001095,0.756809
+T003,risk_classification,medium,,Direct LLM,0.076923,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000134,0.147328
+T003,risk_classification,medium,,Keyword Search,0.333333,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000513,0.760312
+T003,risk_classification,medium,,Standard RAG,0.166667,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,0.0,0.8125,0.803125,1.0,0.000471,0.830313
+T003,risk_classification,medium,,Hybrid RAG,0.166667,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.0008,0.730313
+T003,risk_classification,medium,,Policy-as-Prompt,0.166667,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,0.0,0.8125,0.803125,1.0,0.000447,0.830313
+T003,risk_classification,medium,,Structured Policy-as-Prompt,0.166667,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000767,0.730313
+T003,risk_classification,medium,,Policy-as-Skill No Audit,0.333333,1.0,1.0,1.0,1.0,0.0,0.35,0.65,0.857143,1.0,0.9375,0.941518,1.0,0.001046,0.824866
+T003,risk_classification,medium,,Policy-as-Skill,0.333333,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,1.0,1.0,1.0,1.0,0.00102,0.845
+T004,policy_conflict_detection,medium,,Direct LLM,0.033333,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000241,0.139482
+T004,policy_conflict_detection,medium,,Keyword Search,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000778,0.709149
+T004,policy_conflict_detection,medium,,Standard RAG,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000662,0.709149
+T004,policy_conflict_detection,medium,,Hybrid RAG,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.001064,0.709149
+T004,policy_conflict_detection,medium,,Policy-as-Prompt,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000703,0.709149
+T004,policy_conflict_detection,medium,,Structured Policy-as-Prompt,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.001015,0.709149
+T004,policy_conflict_detection,medium,,Policy-as-Skill No Audit,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001647,0.708702
+T004,policy_conflict_detection,medium,,Policy-as-Skill,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001039,0.728836
+T005,evidence_grounded_recommendation,medium,,Direct LLM,0.1,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,0.0,0.625,0.470536,1.0,0.000128,0.136482
+T005,evidence_grounded_recommendation,medium,,Keyword Search,0.225,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000492,0.755812
+T005,evidence_grounded_recommendation,medium,,Standard RAG,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000531,0.766741
+T005,evidence_grounded_recommendation,medium,,Hybrid RAG,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000746,0.766741
+T005,evidence_grounded_recommendation,medium,,Policy-as-Prompt,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000437,0.766741
+T005,evidence_grounded_recommendation,medium,,Structured Policy-as-Prompt,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000879,0.766741
+T005,evidence_grounded_recommendation,medium,,Policy-as-Skill No Audit,0.177778,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001061,0.731866
+T005,evidence_grounded_recommendation,medium,,Policy-as-Skill,0.177778,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001019,0.752
+T006,human_review_routing,medium,,Direct LLM,0.043478,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000136,0.141308
+T006,human_review_routing,medium,,Keyword Search,0.081633,1.0,1.0,1.0,0.974359,0.025641,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000501,0.711929
+T006,human_review_routing,medium,,Standard RAG,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000457,0.716676
+T006,human_review_routing,medium,,Hybrid RAG,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000736,0.716676
+T006,human_review_routing,medium,,Policy-as-Prompt,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000458,0.716676
+T006,human_review_routing,medium,,Structured Policy-as-Prompt,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000772,0.716676
+T006,human_review_routing,medium,,Policy-as-Skill No Audit,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001097,0.71623
+T006,human_review_routing,medium,,Policy-as-Skill,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001017,0.736364
+T007,policy_question_answering,medium,,Direct LLM,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000136,0.133482
+T007,policy_question_answering,medium,,Keyword Search,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000497,0.849874
+T007,policy_question_answering,medium,,Standard RAG,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000455,0.849874
+T007,policy_question_answering,medium,,Hybrid RAG,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000912,0.849874
+T007,policy_question_answering,medium,,Policy-as-Prompt,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000424,0.849874
+T007,policy_question_answering,medium,,Structured Policy-as-Prompt,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000772,0.849874
+T007,policy_question_answering,medium,,Policy-as-Skill No Audit,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001043,0.834427
+T007,policy_question_answering,medium,,Policy-as-Skill,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001002,0.854561
+T008,compliance_check,medium,,Direct LLM,0.045455,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000134,0.141664
+T008,compliance_check,medium,,Keyword Search,0.081633,1.0,1.0,1.0,0.975,0.025,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000477,0.727006
+T008,compliance_check,medium,,Standard RAG,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000433,0.743734
+T008,compliance_check,medium,,Hybrid RAG,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.001305,0.743734
+T008,compliance_check,medium,,Policy-as-Prompt,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000622,0.743734
+T008,compliance_check,medium,,Structured Policy-as-Prompt,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000995,0.743734
+T008,compliance_check,medium,,Policy-as-Skill No Audit,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001313,0.728287
+T008,compliance_check,medium,,Policy-as-Skill,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001264,0.748421
+T009,risk_classification,medium,,Direct LLM,0.038462,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000285,0.140405
+T009,risk_classification,medium,,Keyword Search,0.042553,1.0,1.0,0.5,1.0,0.0,0.35,0.65,1.0,0.0,0.8125,0.803125,1.0,0.000693,0.692972
+T009,risk_classification,medium,,Standard RAG,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,0.0,0.8125,0.803125,1.0,0.000886,0.778813
+T009,risk_classification,medium,,Hybrid RAG,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,0.0,0.8125,0.803125,1.0,0.000763,0.778813
+T009,risk_classification,medium,,Policy-as-Prompt,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,0.0,0.8125,0.803125,1.0,0.000441,0.778813
+T009,risk_classification,medium,,Structured Policy-as-Prompt,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,0.0,0.8125,0.803125,1.0,0.000762,0.778813
+T009,risk_classification,medium,,Policy-as-Skill No Audit,0.06,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.000998,0.710666
+T009,risk_classification,medium,,Policy-as-Skill,0.06,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001,0.7308
+T010,policy_conflict_detection,medium,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000123,0.140149
+T010,policy_conflict_detection,medium,,Keyword Search,0.170213,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.00053,0.745951
+T010,policy_conflict_detection,medium,,Standard RAG,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000467,0.789947
+T010,policy_conflict_detection,medium,,Hybrid RAG,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000795,0.789947
+T010,policy_conflict_detection,medium,,Policy-as-Prompt,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.00048,0.789947
+T010,policy_conflict_detection,medium,,Structured Policy-as-Prompt,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.00092,0.789947
+T010,policy_conflict_detection,medium,,Policy-as-Skill No Audit,0.170213,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001024,0.730504
+T010,policy_conflict_detection,medium,,Policy-as-Skill,0.170213,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001018,0.750638
+T011,evidence_grounded_recommendation,medium,,Direct LLM,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000112,0.133482
+T011,evidence_grounded_recommendation,medium,,Keyword Search,0.145833,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000571,0.841562
+T011,evidence_grounded_recommendation,medium,,Standard RAG,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000518,0.834461
+T011,evidence_grounded_recommendation,medium,,Hybrid RAG,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000824,0.834461
+T011,evidence_grounded_recommendation,medium,,Policy-as-Prompt,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.00065,0.834461
+T011,evidence_grounded_recommendation,medium,,Structured Policy-as-Prompt,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000879,0.834461
+T011,evidence_grounded_recommendation,medium,,Policy-as-Skill No Audit,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001153,0.819015
+T011,evidence_grounded_recommendation,medium,,Policy-as-Skill,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001934,0.839149
+T012,human_review_routing,medium,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000144,0.140149
+T012,human_review_routing,medium,,Keyword Search,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000502,0.750723
+T012,human_review_routing,medium,,Standard RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000472,0.750723
+T012,human_review_routing,medium,,Hybrid RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000702,0.750723
+T012,human_review_routing,medium,,Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000401,0.750723
+T012,human_review_routing,medium,,Structured Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000785,0.750723
+T012,human_review_routing,medium,,Policy-as-Skill No Audit,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001019,0.735276
+T012,human_review_routing,medium,,Policy-as-Skill,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001121,0.75541
+T013,policy_question_answering,medium,,Direct LLM,0.076923,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,0.0,0.625,0.470536,1.0,0.000135,0.132328
+T013,policy_question_answering,medium,,Keyword Search,0.333333,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000504,0.775312
+T013,policy_question_answering,medium,,Standard RAG,0.166667,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000436,0.845313
+T013,policy_question_answering,medium,,Hybrid RAG,0.166667,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000719,0.745313
+T013,policy_question_answering,medium,,Policy-as-Prompt,0.166667,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.00039,0.845313
+T013,policy_question_answering,medium,,Structured Policy-as-Prompt,0.166667,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000724,0.745313
+T013,policy_question_answering,medium,,Policy-as-Skill No Audit,0.333333,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.000949,0.759866
+T013,policy_question_answering,medium,,Policy-as-Skill,0.333333,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.000975,0.78
+T014,compliance_check,medium,,Direct LLM,0.033333,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000114,0.139482
+T014,compliance_check,medium,,Keyword Search,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000462,0.709149
+T014,compliance_check,medium,,Standard RAG,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000463,0.709149
+T014,compliance_check,medium,,Hybrid RAG,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000676,0.709149
+T014,compliance_check,medium,,Policy-as-Prompt,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.00042,0.709149
+T014,compliance_check,medium,,Structured Policy-as-Prompt,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000748,0.709149
+T014,compliance_check,medium,,Policy-as-Skill No Audit,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001468,0.708702
+T014,compliance_check,medium,,Policy-as-Skill,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001312,0.728836
+T015,risk_classification,medium,,Direct LLM,0.1,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000114,0.151482
+T015,risk_classification,medium,,Keyword Search,0.225,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000483,0.740812
+T015,risk_classification,medium,,Standard RAG,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000439,0.751741
+T015,risk_classification,medium,,Hybrid RAG,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000702,0.751741
+T015,risk_classification,medium,,Policy-as-Prompt,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000398,0.751741
+T015,risk_classification,medium,,Structured Policy-as-Prompt,0.285714,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000711,0.751741
+T015,risk_classification,medium,,Policy-as-Skill No Audit,0.177778,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001004,0.731866
+T015,risk_classification,medium,,Policy-as-Skill,0.177778,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001303,0.752
+T016,policy_conflict_detection,medium,,Direct LLM,0.043478,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000191,0.141308
+T016,policy_conflict_detection,medium,,Keyword Search,0.081633,1.0,1.0,1.0,0.974359,0.025641,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.00053,0.711929
+T016,policy_conflict_detection,medium,,Standard RAG,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000505,0.716676
+T016,policy_conflict_detection,medium,,Hybrid RAG,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000779,0.716676
+T016,policy_conflict_detection,medium,,Policy-as-Prompt,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000475,0.716676
+T016,policy_conflict_detection,medium,,Structured Policy-as-Prompt,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000807,0.716676
+T016,policy_conflict_detection,medium,,Policy-as-Skill No Audit,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001318,0.71623
+T016,policy_conflict_detection,medium,,Policy-as-Skill,0.090909,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001078,0.736364
+T017,evidence_grounded_recommendation,medium,,Direct LLM,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000109,0.133482
+T017,evidence_grounded_recommendation,medium,,Keyword Search,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000502,0.849874
+T017,evidence_grounded_recommendation,medium,,Standard RAG,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000469,0.849874
+T017,evidence_grounded_recommendation,medium,,Hybrid RAG,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000745,0.849874
+T017,evidence_grounded_recommendation,medium,,Policy-as-Prompt,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000463,0.849874
+T017,evidence_grounded_recommendation,medium,,Structured Policy-as-Prompt,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.00076,0.849874
+T017,evidence_grounded_recommendation,medium,,Policy-as-Skill No Audit,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001081,0.834427
+T017,evidence_grounded_recommendation,medium,,Policy-as-Skill,0.210526,1.0,1.0,1.0,0.972222,0.027778,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001056,0.854561
+T018,human_review_routing,medium,,Direct LLM,0.045455,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000158,0.141664
+T018,human_review_routing,medium,,Keyword Search,0.081633,1.0,1.0,1.0,0.975,0.025,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.00049,0.727006
+T018,human_review_routing,medium,,Standard RAG,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000526,0.743734
+T018,human_review_routing,medium,,Hybrid RAG,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000777,0.743734
+T018,human_review_routing,medium,,Policy-as-Prompt,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000444,0.743734
+T018,human_review_routing,medium,,Structured Policy-as-Prompt,0.157895,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000749,0.743734
+T018,human_review_routing,medium,,Policy-as-Skill No Audit,0.081633,1.0,1.0,1.0,0.975,0.025,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001069,0.71156
+T018,human_review_routing,medium,,Policy-as-Skill,0.081633,1.0,1.0,1.0,0.975,0.025,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001025,0.731694
+T019,policy_question_answering,medium,,Direct LLM,0.038462,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,0.0,0.625,0.470536,1.0,0.000116,0.125405
+T019,policy_question_answering,medium,,Keyword Search,0.042553,1.0,1.0,0.5,1.0,0.0,0.35,0.65,1.0,1.0,0.8125,0.953125,1.0,0.000512,0.707972
+T019,policy_question_answering,medium,,Standard RAG,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,1.0,0.8125,0.953125,1.0,0.000445,0.793813
+T019,policy_question_answering,medium,,Hybrid RAG,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,1.0,0.8125,0.953125,1.0,0.000697,0.793813
+T019,policy_question_answering,medium,,Policy-as-Prompt,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,1.0,0.8125,0.953125,1.0,0.000485,0.793813
+T019,policy_question_answering,medium,,Structured Policy-as-Prompt,0.075,1.0,1.0,1.0,1.0,0.0,0.35,0.65,1.0,1.0,0.8125,0.953125,1.0,0.000792,0.793813
+T019,policy_question_answering,medium,,Policy-as-Skill No Audit,0.042553,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.0011,0.707526
+T019,policy_question_answering,medium,,Policy-as-Skill,0.042553,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001028,0.72766
+T020,compliance_check,medium,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000147,0.140149
+T020,compliance_check,medium,,Keyword Search,0.170213,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000518,0.745951
+T020,compliance_check,medium,,Standard RAG,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.00046,0.789947
+T020,compliance_check,medium,,Hybrid RAG,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000743,0.789947
+T020,compliance_check,medium,,Policy-as-Prompt,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000468,0.789947
+T020,compliance_check,medium,,Structured Policy-as-Prompt,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000942,0.789947
+T020,compliance_check,medium,,Policy-as-Skill No Audit,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001231,0.7745
+T020,compliance_check,medium,,Policy-as-Skill,0.414634,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001032,0.794634
+T021,risk_classification,medium,,Direct LLM,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000144,0.133482
+T021,risk_classification,medium,,Keyword Search,0.145833,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.00067,0.841562
+T021,risk_classification,medium,,Standard RAG,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000542,0.834461
+T021,risk_classification,medium,,Hybrid RAG,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000789,0.834461
+T021,risk_classification,medium,,Policy-as-Prompt,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000551,0.834461
+T021,risk_classification,medium,,Structured Policy-as-Prompt,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001042,0.834461
+T021,risk_classification,medium,,Policy-as-Skill No Audit,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001513,0.819015
+T021,risk_classification,medium,,Policy-as-Skill,0.106383,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001116,0.839149
+T022,policy_conflict_detection,medium,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000109,0.140149
+T022,policy_conflict_detection,medium,,Keyword Search,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000484,0.750723
+T022,policy_conflict_detection,medium,,Standard RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.00046,0.750723
+T022,policy_conflict_detection,medium,,Hybrid RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000728,0.750723
+T022,policy_conflict_detection,medium,,Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000627,0.750723
+T022,policy_conflict_detection,medium,,Structured Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000822,0.750723
+T022,policy_conflict_detection,medium,,Policy-as-Skill No Audit,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001026,0.735276
+T022,policy_conflict_detection,medium,,Policy-as-Skill,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.000985,0.75541
+T023,evidence_grounded_recommendation,medium,,Direct LLM,0.076923,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,0.0,0.625,0.470536,1.0,0.000139,0.132328
+T023,evidence_grounded_recommendation,medium,,Keyword Search,0.333333,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000492,0.775312
+T023,evidence_grounded_recommendation,medium,,Standard RAG,0.166667,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000437,0.845313
+T023,evidence_grounded_recommendation,medium,,Hybrid RAG,0.166667,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000722,0.745313
+T023,evidence_grounded_recommendation,medium,,Policy-as-Prompt,0.166667,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000391,0.845313
+T023,evidence_grounded_recommendation,medium,,Structured Policy-as-Prompt,0.166667,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000693,0.745313
+T023,evidence_grounded_recommendation,medium,,Policy-as-Skill No Audit,0.333333,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001072,0.759866
+T023,evidence_grounded_recommendation,medium,,Policy-as-Skill,0.333333,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001059,0.78
+T024,human_review_routing,medium,,Direct LLM,0.033333,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000109,0.139482
+T024,human_review_routing,medium,,Keyword Search,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000528,0.709149
+T024,human_review_routing,medium,,Standard RAG,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000456,0.709149
+T024,human_review_routing,medium,,Hybrid RAG,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000709,0.709149
+T024,human_review_routing,medium,,Policy-as-Prompt,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000415,0.709149
+T024,human_review_routing,medium,,Structured Policy-as-Prompt,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,0.0,0.8125,0.803125,1.0,0.000962,0.709149
+T024,human_review_routing,medium,,Policy-as-Skill No Audit,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001276,0.708702
+T024,human_review_routing,medium,,Policy-as-Skill,0.075758,1.0,1.0,1.0,0.96,0.04,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001035,0.728836
+G0001,evidence_grounded_recommendation,medium,,Direct LLM,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.00012,0.133482
+G0001,evidence_grounded_recommendation,medium,,Keyword Search,0.073171,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000609,0.728483
+G0001,evidence_grounded_recommendation,medium,,Standard RAG,0.088889,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000569,0.731313
+G0001,evidence_grounded_recommendation,medium,,Hybrid RAG,0.088889,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000914,0.731313
+G0001,evidence_grounded_recommendation,medium,,Policy-as-Prompt,0.088889,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000539,0.731313
+G0001,evidence_grounded_recommendation,medium,,Structured Policy-as-Prompt,0.088889,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000938,0.731313
+G0001,evidence_grounded_recommendation,medium,,Policy-as-Skill No Audit,0.073171,1.0,1.0,1.0,1.0,0.0,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001319,0.713037
+G0001,evidence_grounded_recommendation,medium,,Policy-as-Skill,0.073171,1.0,1.0,1.0,1.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.002453,0.733171
+G0002,compliance_check,hard,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000131,0.140149
+G0002,compliance_check,hard,,Keyword Search,0.142857,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000705,0.841027
+G0002,compliance_check,hard,,Standard RAG,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000695,0.830006
+G0002,compliance_check,hard,,Hybrid RAG,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001107,0.830006
+G0002,compliance_check,hard,,Policy-as-Prompt,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000701,0.830006
+G0002,compliance_check,hard,,Structured Policy-as-Prompt,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001086,0.830006
+G0002,compliance_check,hard,,Policy-as-Skill No Audit,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001369,0.81456
+G0002,compliance_check,hard,,Policy-as-Skill,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001303,0.834694
+G0003,risk_classification,medium,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000124,0.140149
+G0003,risk_classification,medium,,Keyword Search,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000594,0.750723
+G0003,risk_classification,medium,,Standard RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000588,0.750723
+G0003,risk_classification,medium,,Hybrid RAG,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000982,0.750723
+G0003,risk_classification,medium,,Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000573,0.750723
+G0003,risk_classification,medium,,Structured Policy-as-Prompt,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000985,0.750723
+G0003,risk_classification,medium,,Policy-as-Skill No Audit,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001271,0.735276
+G0003,risk_classification,medium,,Policy-as-Skill,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001595,0.75541
+G0004,compliance_check,hard,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000149,0.140149
+G0004,compliance_check,hard,,Keyword Search,0.142857,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000702,0.841027
+G0004,compliance_check,hard,,Standard RAG,0.055556,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000654,0.825313
+G0004,compliance_check,hard,,Hybrid RAG,0.055556,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001095,0.825313
+G0004,compliance_check,hard,,Policy-as-Prompt,0.055556,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000605,0.825313
+G0004,compliance_check,hard,,Structured Policy-as-Prompt,0.055556,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001034,0.825313
+G0004,compliance_check,hard,,Policy-as-Skill No Audit,0.170732,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001441,0.830598
+G0004,compliance_check,hard,,Policy-as-Skill,0.170732,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001312,0.850732
+G0005,compliance_check,hard,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000127,0.140149
+G0005,compliance_check,hard,,Keyword Search,0.142857,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000689,0.841027
+G0005,compliance_check,hard,,Standard RAG,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000661,0.830006
+G0005,compliance_check,hard,,Hybrid RAG,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001142,0.830006
+G0005,compliance_check,hard,,Policy-as-Prompt,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000694,0.830006
+G0005,compliance_check,hard,,Structured Policy-as-Prompt,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001072,0.830006
+G0005,compliance_check,hard,,Policy-as-Skill No Audit,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001318,0.81456
+G0005,compliance_check,hard,,Policy-as-Skill,0.081633,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001375,0.834694
+G0006,policy_update_adaptation,hard,v2,Direct LLM,0.066667,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.520536,0.0,0.000118,0.135482
+G0006,policy_update_adaptation,hard,v2,Keyword Search,0.395349,1.0,1.0,1.0,0.973684,0.026316,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000686,0.883317
+G0006,policy_update_adaptation,hard,v2,Standard RAG,0.395349,1.0,1.0,1.0,0.973684,0.026316,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000674,0.883317
+G0006,policy_update_adaptation,hard,v2,Hybrid RAG,0.395349,1.0,1.0,1.0,0.973684,0.026316,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001042,0.883317
+G0006,policy_update_adaptation,hard,v2,Policy-as-Prompt,0.395349,1.0,1.0,1.0,0.973684,0.026316,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000614,0.883317
+G0006,policy_update_adaptation,hard,v2,Structured Policy-as-Prompt,0.395349,1.0,1.0,1.0,0.973684,0.026316,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001011,0.883317
+G0006,policy_update_adaptation,hard,v2,Policy-as-Skill No Audit,0.395349,1.0,1.0,1.0,0.973684,0.026316,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001341,0.867871
+G0006,policy_update_adaptation,hard,v2,Policy-as-Skill,0.395349,1.0,1.0,1.0,0.973684,0.026316,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.002328,0.888005
+G0007,risk_classification,medium,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000119,0.140149
+G0007,risk_classification,medium,,Keyword Search,0.211538,1.0,1.0,1.0,0.977778,0.022222,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000628,0.750723
+G0007,risk_classification,medium,,Standard RAG,0.275,1.0,1.0,1.0,0.969697,0.030303,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000572,0.761176
+G0007,risk_classification,medium,,Hybrid RAG,0.275,1.0,1.0,1.0,0.969697,0.030303,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000863,0.761176
+G0007,risk_classification,medium,,Policy-as-Prompt,0.275,1.0,1.0,1.0,0.969697,0.030303,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000524,0.761176
+G0007,risk_classification,medium,,Structured Policy-as-Prompt,0.275,1.0,1.0,1.0,0.969697,0.030303,1.0,0.0,1.0,1.0,0.8125,0.953125,1.0,0.000959,0.761176
+G0007,risk_classification,medium,,Policy-as-Skill No Audit,0.275,1.0,1.0,1.0,0.969697,0.030303,1.0,0.0,0.857143,1.0,0.9375,0.941518,1.0,0.001253,0.74573
+G0007,risk_classification,medium,,Policy-as-Skill,0.275,1.0,1.0,1.0,0.969697,0.030303,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.001244,0.765864
+G0008,compliance_check,hard,,Direct LLM,0.037037,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.714286,1.0,0.625,0.620536,1.0,0.000109,0.140149
+G0008,compliance_check,hard,,Keyword Search,0.170732,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000687,0.846044
+G0008,compliance_check,hard,,Standard RAG,0.2,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000593,0.851313
+G0008,compliance_check,hard,,Hybrid RAG,0.2,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001084,0.851313
+G0008,compliance_check,hard,,Policy-as-Prompt,0.2,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.000586,0.851313
+G0008,compliance_check,hard,,Structured Policy-as-Prompt,0.2,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,0.8125,0.953125,1.0,0.001156,0.851313
+G0008,compliance_check,hard,,Policy-as-Skill No Audit,0.2,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.857143,1.0,0.9375,0.941518,1.0,0.001373,0.835866
+G0008,compliance_check,hard,,Policy-as-Skill,0.2,1.0,1.0,1.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,0.001376,0.856

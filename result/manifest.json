@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-07-02T13:15:12Z",
+  "platform": "Linux-4.4.0-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "ollama_base_url": "http://host.docker.internal:11434",
+  "ollama_model": "gemma4:e2b",
+  "ollama_enabled": true,
+  "ollama_available": false,
+  "seed": 7,
+  "benchmark_path": "/mnt/data/policy-as-skill-upgraded/result/benchmark_generated.jsonl",
+  "benchmark_requested_size": 120,
+  "tasks_evaluated": 32,
+  "methods": [
+    "Direct LLM",
+    "Keyword Search",
+    "Standard RAG",
+    "Hybrid RAG",
+    "Policy-as-Prompt",
+    "Structured Policy-as-Prompt",
+    "Policy-as-Skill No Audit",
+    "Policy-as-Skill"
+  ],
+  "policy_documents": [
+    {
+      "source": "eu_ai_act_sample.md",
+      "version": "v1",
+      "sha256": "f29171746bfb1a553c849d14412294cf83c3e94b729323f71351b29c1491abaa",
+      "chars": 934
+    },
+    {
+      "source": "internal_department_policy_sample.md",
+      "version": "v1",
+      "sha256": "cb6e471397d7c11c2bf80c7cdeeeda1d7b214e2b0211bcdf004d89050bd6b928",
+      "chars": 767
+    },
+    {
+      "source": "model_governance_sample.md",
+      "version": "v1",
+      "sha256": "300c0149e564fd8a8ceca571d86fe65f24cb791a3746773812cab60ee015cb07",
+      "chars": 1120
+    },
+    {
+      "source": "pilot_policy_v1.md",
+      "version": "v1",
+      "sha256": "5d5786af0647e14d84ad61806cb2eeb43e7b15e9761090d774b0228691c9182d",
+      "chars": 506
+    },
+    {
+      "source": "pilot_policy_v2.md",
+      "version": "v2",
+      "sha256": "3b3126d8d530275cfc5b3ee2ed3b9c16d53dfd975ec7705193939799d33ccaf0",
+      "chars": 506
+    },
+    {
+      "source": "public_sector_guideline_sample.md",
+      "version": "v1",
+      "sha256": "f52cd17a0bcce57f7c82122e44606e802f87a46ef5d92ea87881a95f260da806",
+      "chars": 845
+    }
+  ],
+  "run_id": "f9826e753bd1"
+}

@@ -1,45 +1,170 @@
-import json, logging, random
+from __future__ import annotations
+
 import csv
+import json
+import logging
+import platform
+import random
+from pathlib import Path
 from statistics import mean
+
+from .agents import run_method
+from .benchmark_generator import ensure_research_benchmark
 from .config import Config
 from .data_loader import load_policies, load_tasks
-from .retrieval import PolicyRetriever
-from .ollama_client import OllamaClient
-from .agents import run_method
 from .evaluators import evaluate
+from .ollama_client import OllamaClient
 from .report_generator import generate_report
-from .utils import append_jsonl
+from .retrieval import PolicyRetriever
+from .utils import append_jsonl, now, stable_hash
+
+
+def _write_csv(path: Path, rows: list[dict]) -> None:
+    if not rows:
+        path.write_text("", encoding="utf-8")
+        return
+    fields = list(rows[0].keys())
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _aggregate(rows: list[dict], methods: list[str]) -> dict:
+    numeric = [
+        "answer_similarity",
+        "citation_coverage",
+        "citation_precision",
+        "policy_ref_recall",
+        "evidence_faithfulness",
+        "unsupported_claim_rate",
+        "contradiction_rate",
+        "decision_accuracy",
+        "traceability_score",
+        "human_review_correctness",
+        "audit_completeness",
+        "governance_readiness_score",
+        "update_adaptation_score",
+        "latency_seconds",
+        "overall_score",
+    ]
+    agg: dict = {}
+    for m in methods:
+        mr = [r for r in rows if r["method"] == m]
+        if not mr:
+            continue
+        agg[m] = {k: mean(float(r[k]) for r in mr) for k in numeric}
+        agg[m]["n"] = len(mr)
+    return agg
+
 
 def main() -> None:
-    cfg=Config(); random.seed(cfg.seed); cfg.result_dir.mkdir(exist_ok=True)
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
-    trace_path=cfg.result_dir/'traces.jsonl'; trace_path.write_text('', encoding='utf-8')
-    logging.info('Starting Policy-as-Skill run result_dir=%s ollama_base_url=%s ollama_model=%s ollama_timeout_seconds=%s', cfg.result_dir, cfg.ollama_base_url, cfg.ollama_model, cfg.timeout_seconds)
-    policies=load_policies(cfg.data_dir); tasks=load_tasks(cfg.data_dir)
-    logging.info('Loaded inputs policies=%s tasks=%s data_dir=%s', len(policies), len(tasks), cfg.data_dir)
-    retriever=PolicyRetriever(policies)
-    client=OllamaClient(cfg.ollama_base_url,cfg.ollama_model,cfg.timeout_seconds,trace_path)
-    methods=['Keyword Search','Standard RAG','Policy-as-Prompt','Policy-as-Skill']
-    rows=[]; traces=[]; failures={m:[] for m in methods}
-    for task in tasks:
-        logging.info('Processing task task_id=%s task_type=%s question_chars=%s', task.id, task.task_type, len(task.question))
-        for method in methods:
-            logging.info('Running method task_id=%s method=%s', task.id, method)
-            try:
-                tr=run_method(method,task,retriever,client); traces.append(tr); append_jsonl(trace_path, {'kind':'decision_trace', **tr})
-                ev=evaluate(task,tr); row={'task_id':task.id,'task_type':task.task_type,'method':method,**ev}; rows.append(row)
-                logging.info('Completed method task_id=%s method=%s overall_score=%.3f latency_seconds=%.3f', task.id, method, ev['overall_score'], ev['latency_seconds'])
-                if ev['overall_score'] < 0.65: failures[method].append({'task_id':task.id,'overall_score':round(ev['overall_score'],3),'reason':'below threshold'})
-            except Exception as e:
-                logging.exception('Task failed task_id=%s method=%s', task.id, method); failures[method].append({'task_id':task.id,'error':str(e)})
-    
-    with (cfg.result_dir/'metrics.csv').open('w', newline='', encoding='utf-8') as f:
-        writer=csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-        writer.writeheader(); writer.writerows(rows)
-    (cfg.result_dir/'metrics.json').write_text(json.dumps({'rows':rows,'aggregate':{m:{k:mean(r[k] for r in rows if r['method']==m) for k in ['answer_similarity','citation_coverage','policy_ref_recall','traceability_score','human_review_correctness','latency_seconds','overall_score']} for m in methods}}, indent=2), encoding='utf-8')
-    (cfg.result_dir/'failures.json').write_text(json.dumps(failures, indent=2), encoding='utf-8')
-    generate_report(cfg.result_dir, rows, traces, failures)
-    logging.info('Report written to %s', cfg.result_dir/'report.html')
+    cfg = Config()
+    random.seed(cfg.seed)
+    cfg.result_dir.mkdir(parents=True, exist_ok=True)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logger = logging.getLogger("policy_as_skill")
 
-if __name__ == '__main__':
+    trace_path = cfg.result_dir / "traces.jsonl"
+    trace_path.write_text("", encoding="utf-8")
+
+    benchmark_path = ensure_research_benchmark(cfg.data_dir, cfg.result_dir, cfg.benchmark_size, cfg.seed)
+    policies = load_policies(cfg.data_dir)
+    tasks = load_tasks(cfg.data_dir, benchmark_path)
+    if cfg.max_tasks > 0:
+        tasks = tasks[: cfg.max_tasks]
+
+    methods = cfg.method_list()
+    retriever = PolicyRetriever(policies)
+    client = OllamaClient(
+        cfg.ollama_base_url,
+        cfg.ollama_model,
+        cfg.timeout_seconds,
+        trace_path,
+        enabled=cfg.ollama_enabled,
+        healthcheck_seconds=cfg.healthcheck_seconds,
+    )
+
+    manifest = {
+        "timestamp": now(),
+        "platform": platform.platform(),
+        "python": platform.python_version(),
+        "ollama_base_url": cfg.ollama_base_url,
+        "ollama_model": cfg.ollama_model,
+        "ollama_enabled": cfg.ollama_enabled,
+        "ollama_available": client.is_available(),
+        "seed": cfg.seed,
+        "benchmark_path": str(benchmark_path),
+        "benchmark_requested_size": cfg.benchmark_size,
+        "tasks_evaluated": len(tasks),
+        "methods": methods,
+        "policy_documents": [
+            {"source": d.source, "version": d.version, "sha256": d.sha256, "chars": len(d.text)} for d in policies
+        ],
+        "run_id": stable_hash(now() + cfg.ollama_model + str(cfg.seed)),
+    }
+    (cfg.result_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    logger.info(
+        "Starting Policy-as-Skill platform tasks=%s methods=%s result_dir=%s ollama=%s available=%s",
+        len(tasks),
+        len(methods),
+        cfg.result_dir,
+        cfg.ollama_model,
+        manifest["ollama_available"],
+    )
+
+    rows: list[dict] = []
+    traces: list[dict] = []
+    failures: dict[str, list[dict]] = {m: [] for m in methods}
+
+    for ti, task in enumerate(tasks, start=1):
+        logger.info("Processing task %s/%s task_id=%s task_type=%s", ti, len(tasks), task.id, task.task_type)
+        for method in methods:
+            try:
+                tr = run_method(method, task, retriever, client, cfg.top_k)
+                traces.append(tr)
+                append_jsonl(trace_path, {"kind": "decision_trace", **tr})
+                ev = evaluate(task, tr)
+                row = {
+                    "task_id": task.id,
+                    "task_type": task.task_type,
+                    "difficulty": task.difficulty,
+                    "policy_version": task.policy_version,
+                    "method": method,
+                    **ev,
+                }
+                rows.append(row)
+                if ev["overall_score"] < 0.58:
+                    failures[method].append(
+                        {
+                            "task_id": task.id,
+                            "task_type": task.task_type,
+                            "overall_score": ev["overall_score"],
+                            "reason": "below quality threshold",
+                            "low_metrics": {
+                                k: ev[k]
+                                for k in [
+                                    "citation_precision",
+                                    "policy_ref_recall",
+                                    "evidence_faithfulness",
+                                    "governance_readiness_score",
+                                ]
+                                if ev[k] < 0.6
+                            },
+                        }
+                    )
+            except Exception as e:
+                logger.exception("Task failed task_id=%s method=%s", task.id, method)
+                failures[method].append({"task_id": task.id, "method": method, "error": str(e)})
+
+    _write_csv(cfg.result_dir / "metrics.csv", rows)
+    metrics_payload = {"rows": rows, "aggregate": _aggregate(rows, methods), "manifest": manifest}
+    (cfg.result_dir / "metrics.json").write_text(json.dumps(metrics_payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    (cfg.result_dir / "failures.json").write_text(json.dumps(failures, indent=2, ensure_ascii=False), encoding="utf-8")
+    generate_report(cfg.result_dir, rows, traces, failures, manifest)
+    logger.info("Report written to %s", cfg.result_dir / "report.html")
+
+
+if __name__ == "__main__":
     main()
