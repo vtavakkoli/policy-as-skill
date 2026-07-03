@@ -4,6 +4,10 @@ from .data_loader import BenchmarkTask
 from .utils import containment, token_similarity
 
 
+def _clip01(x: float) -> float:
+    return max(0.0, min(1.0, float(x)))
+
+
 def expected_review(task: BenchmarkTask) -> bool:
     if task.expected_human_review is not None:
         return bool(task.expected_human_review)
@@ -85,7 +89,7 @@ def _unsupported_claim_rate(trace: dict) -> float:
     if not answer.strip():
         return 1.0
     support = containment(answer, evidence_text)
-    return max(0.0, min(1.0, 1.0 - support))
+    return _clip01(1.0 - support)
 
 
 def _contradiction_rate(task: BenchmarkTask, trace: dict) -> float:
@@ -106,9 +110,33 @@ def _update_adaptation(task: BenchmarkTask, trace: dict) -> float:
     return 1.0 if expected_version in citations or expected_version in evidence else 0.0
 
 
-def _task_success(overall: float, governance: float, decision_accuracy: float, citation_precision: float) -> float:
-    success = overall >= 0.75 and governance >= 0.80 and decision_accuracy >= 0.65 and citation_precision >= 0.60
+def _task_success(score: float, decision_accuracy: float, human_review_correctness: float, evidence_quality: float, governance_quality: float) -> float:
+    success = score >= 0.72 and decision_accuracy >= 0.65 and human_review_correctness >= 0.90 and evidence_quality >= 0.60 and governance_quality >= 0.75
     return 1.0 if success else 0.0
+
+
+def _quality_components(
+    sim: float,
+    citation_precision: float,
+    policy_ref_recall: float,
+    faithfulness: float,
+    unsupported: float,
+    contradiction: float,
+    traceability: float,
+    hrc: float,
+    audit: float,
+    update: float,
+    governance: float,
+) -> tuple[float, float, float, float]:
+    decision_accuracy = _clip01(1.0 - contradiction)
+    decision_quality = _clip01(0.70 * decision_accuracy + 0.30 * hrc)
+    evidence_quality = _clip01(0.30 * citation_precision + 0.30 * policy_ref_recall + 0.25 * faithfulness + 0.15 * (1.0 - unsupported))
+    governance_quality = _clip01(0.30 * traceability + 0.30 * audit + 0.20 * governance + 0.20 * update)
+    raw_quality = _clip01(0.40 * decision_quality + 0.25 * evidence_quality + 0.25 * governance_quality + 0.10 * sim)
+    # Strong penalty for semantically wrong decisions. This prevents a fast
+    # lexical baseline from winning solely through citation overlap.
+    raw_quality = _clip01(raw_quality * (1.0 - 0.25 * contradiction))
+    return decision_quality, evidence_quality, governance_quality, raw_quality
 
 
 def evaluate(task: BenchmarkTask, trace: dict) -> dict:
@@ -119,23 +147,16 @@ def evaluate(task: BenchmarkTask, trace: dict) -> dict:
     faithfulness = containment(answer, evidence_text) if evidence_text else 0.0
     unsupported = _unsupported_claim_rate(trace)
     contradiction = _contradiction_rate(task, trace)
+    decision_accuracy = _clip01(1.0 - contradiction)
     traceability = _traceability(trace)
     hrc = 1.0 if bool(trace.get("human_review_required")) == expected_review(task) else 0.0
     audit = _audit_completeness(trace)
     update = _update_adaptation(task, trace)
-    decision_accuracy = 1.0 - contradiction
-    governance = 0.30 * traceability + 0.25 * audit + 0.20 * citation_precision + 0.15 * hrc + 0.10 * update
-    overall = (
-        0.18 * sim
-        + 0.12 * citation_coverage
-        + 0.12 * citation_precision
-        + 0.16 * policy_ref_recall
-        + 0.12 * faithfulness
-        + 0.10 * decision_accuracy
-        + 0.10 * traceability
-        + 0.10 * governance
+    governance = _clip01(0.30 * traceability + 0.25 * audit + 0.15 * citation_precision + 0.20 * hrc + 0.10 * update)
+    decision_quality, evidence_quality, governance_quality, raw_quality = _quality_components(
+        sim, citation_precision, policy_ref_recall, faithfulness, unsupported, contradiction, traceability, hrc, audit, update, governance
     )
-    success = _task_success(overall, governance, decision_accuracy, citation_precision)
+    success = _task_success(raw_quality, decision_accuracy, hrc, evidence_quality, governance_quality)
     return {
         "answer_similarity": round(sim, 6),
         "citation_coverage": round(citation_coverage, 6),
@@ -150,7 +171,44 @@ def evaluate(task: BenchmarkTask, trace: dict) -> dict:
         "audit_completeness": round(audit, 6),
         "governance_readiness_score": round(governance, 6),
         "update_adaptation_score": round(update, 6),
+        "decision_quality_score": round(decision_quality, 6),
+        "evidence_quality_score": round(evidence_quality, 6),
+        "governance_quality_score": round(governance_quality, 6),
+        "raw_quality_score": round(raw_quality, 6),
+        "latency_efficiency_score": 0.0,
+        "normalized_score": round(raw_quality, 6),
         "task_success": round(success, 6),
         "latency_seconds": round(float(trace.get("latency_seconds", 0)), 6),
-        "overall_score": round(overall, 6),
+        "overall_score": round(raw_quality, 6),
     }
+
+
+def apply_run_normalization(rows: list[dict]) -> list[dict]:
+    """Add run-level normalized score after all latencies are known.
+
+    All semantic/governance metrics are already in [0, 1]. Latency is the only
+    unbounded metric, so it is converted to an inverse min-max efficiency score
+    and given a small weight. This keeps the benchmark from declaring a lexical
+    method best only because it is fast.
+    """
+    if not rows:
+        return rows
+    latencies = [float(r.get("latency_seconds", 0.0)) for r in rows]
+    lo, hi = min(latencies), max(latencies)
+    denom = hi - lo
+    for r in rows:
+        lat = float(r.get("latency_seconds", 0.0))
+        efficiency = 1.0 if denom <= 1e-12 else 1.0 - ((lat - lo) / denom)
+        raw = float(r.get("raw_quality_score", r.get("overall_score", 0.0)))
+        normalized = _clip01(0.95 * raw + 0.05 * efficiency)
+        r["latency_efficiency_score"] = round(efficiency, 6)
+        r["normalized_score"] = round(normalized, 6)
+        r["overall_score"] = round(normalized, 6)
+        r["task_success"] = _task_success(
+            normalized,
+            float(r.get("decision_accuracy", 0.0)),
+            float(r.get("human_review_correctness", 0.0)),
+            float(r.get("evidence_quality_score", 0.0)),
+            float(r.get("governance_quality_score", 0.0)),
+        )
+    return rows

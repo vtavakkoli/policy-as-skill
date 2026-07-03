@@ -186,7 +186,7 @@ def _svg_heatmap(rows: list[dict], metric: str = "overall_score") -> str:
         items.append(f"<text x='{legend_x + idx*88 + 28}' y='{legend_y + 34}' text-anchor='middle' font-size='11' fill='#475569'>{val:.2f}</text>")
     return f"""
     <div class='chart-card span-2'>
-      <div class='chart-title-row'><h3>Task-type performance heatmap</h3><span class='hint'>Mean overall score</span></div>
+      <div class='chart-title-row'><h3>Task-type performance heatmap</h3><span class='hint'>Mean normalized score</span></div>
       <svg viewBox='0 0 {width} {height}' role='img' aria-label='Task-type performance heatmap'>
         <rect width='{width}' height='{height}' rx='24' fill='white'/>
         {''.join(items)}
@@ -222,6 +222,12 @@ def _balanced_task_badges(manifest: dict | None) -> str:
 def generate_report(result_dir: Path, metrics: list[dict], traces: list[dict], failures: dict, manifest: dict | None = None) -> None:
     cols = [
         "overall_score",
+        "normalized_score",
+        "raw_quality_score",
+        "decision_quality_score",
+        "evidence_quality_score",
+        "governance_quality_score",
+        "latency_efficiency_score",
         "governance_readiness_score",
         "traceability_score",
         "audit_completeness",
@@ -260,8 +266,13 @@ def generate_report(result_dir: Path, metrics: list[dict], traces: list[dict], f
             {
                 "method": row["method"],
                 "n": row["n"],
+                "normalized_score": _fmt_mean_std(row["normalized_score_mean"], row["normalized_score_std"]),
                 "overall_score": _fmt_mean_std(row["overall_score_mean"], row["overall_score_std"]),
                 "task_success": _fmt_mean_std(row["task_success_mean"], row["task_success_std"], pct=True),
+                "decision_quality_score": _fmt_mean_std(row["decision_quality_score_mean"], row["decision_quality_score_std"]),
+                "evidence_quality_score": _fmt_mean_std(row["evidence_quality_score_mean"], row["evidence_quality_score_std"]),
+                "governance_quality_score": _fmt_mean_std(row["governance_quality_score_mean"], row["governance_quality_score_std"]),
+                "latency_efficiency_score": _fmt_mean_std(row["latency_efficiency_score_mean"], row["latency_efficiency_score_std"]),
                 "governance_readiness_score": _fmt_mean_std(row["governance_readiness_score_mean"], row["governance_readiness_score_std"]),
                 "traceability_score": _fmt_mean_std(row["traceability_score_mean"], row["traceability_score_std"]),
                 "audit_completeness": _fmt_mean_std(row["audit_completeness_mean"], row["audit_completeness_std"]),
@@ -341,14 +352,14 @@ pre {{ background:#0f172a; color:#e2e8f0; padding:18px; border-radius:18px; over
 <div class='kpi-grid'>
   <div class='kpi'><span>Tasks evaluated</span><b>{len({r['task_id'] for r in metrics})}</b></div>
   <div class='kpi'><span>Methods</span><b>{len({r['method'] for r in metrics})}</b></div>
-  <div class='kpi'><span>Best overall</span><b style='font-size:22px'>{html.escape(str(best_method.get('method','n/a')))}</b></div>
+  <div class='kpi'><span>Best normalized score</span><b style='font-size:22px'>{html.escape(str(best_method.get('method','n/a')))}</b></div>
   <div class='kpi'><span>Best success rate</span><b style='font-size:22px'>{html.escape(str(best_success.get('method','n/a')))}</b></div>
 </div>
 <div class='info-row'>
   {_balanced_task_badges(manifest)}
 </div>
 <div class='callout' style='margin-top:16px'>
-  <b>Balanced benchmark configuration.</b> The experiment uses the static curated benchmark in <code>data/tasks/benchmark_tasks.jsonl</code> with <b>N=10 tasks per task type</b>. Aggregate results are reported as <b>mean ± standard deviation</b> across tasks, which makes the report more suitable for paper figures and comparisons.
+  <b>Adversarial benchmark configuration.</b> The experiment uses the static curated benchmark in <code>data/tasks/benchmark_tasks.jsonl</code>. It includes balanced core tasks plus semantic-trap cases with negation, missing mandatory controls, version conflicts, and false-positive low-risk wording. Aggregate results are reported as <b>mean ± standard deviation</b> across tasks.
 </div>
 <p class='small'>The platform avoids ground-truth leakage: expected answers are used only by the evaluator, never during answer generation.</p>
 </section>
@@ -370,22 +381,24 @@ pre {{ background:#0f172a; color:#e2e8f0; padding:18px; border-radius:18px; over
 
 <section>
 <h2>E. Metrics and Ablation View</h2>
-<p class='lead'>Each metric chart below shows the <b>mean</b> bar and the <b>± standard deviation</b> whisker. This makes the variability across tasks explicit.</p>
+<p class='lead'>Each metric chart below shows the <b>mean</b> bar and the <b>± standard deviation</b> whisker. The headline score is now a run-normalized score: bounded decision, evidence, and governance metrics are combined with a small inverse min-max latency term. Decision errors are penalized so Keyword Search cannot win merely through lexical citation overlap.</p>
 <div class='grid'>
-{_svg_metric_chart('Overall score by method', agg, 'overall_score')}
+{_svg_metric_chart('Normalized score by method', agg, 'normalized_score')}
+{_svg_metric_chart('Decision quality by method', agg, 'decision_quality_score')}
 {_svg_task_success_chart(agg)}
+{_svg_metric_chart('Governance quality by method', agg, 'governance_quality_score')}
 {_svg_metric_chart('Governance readiness by method', agg, 'governance_readiness_score')}
 {_svg_metric_chart('Citation precision by method', agg, 'citation_precision')}
 {_svg_metric_chart('Audit completeness by method', agg, 'audit_completeness')}
 {_svg_metric_chart('Latency by method', agg, 'latency_seconds', suffix='s', lower_is_better=True)}
 </div>
 <h3 style='margin:20px 0 12px'>Aggregate table (mean ± std)</h3>
-{_table(agg_table, ['method','n','overall_score','task_success','governance_readiness_score','traceability_score','audit_completeness','citation_precision','policy_ref_recall','evidence_faithfulness','human_review_correctness','update_adaptation_score','latency_seconds'])}
+{_table(agg_table, ['method','n','normalized_score','task_success','decision_quality_score','evidence_quality_score','governance_quality_score','governance_readiness_score','traceability_score','audit_completeness','citation_precision','policy_ref_recall','evidence_faithfulness','human_review_correctness','latency_efficiency_score','latency_seconds'])}
 </section>
 
 <section>
 <h2>F. Task-Type Performance</h2>
-<p class='lead'>The heatmap summarizes mean overall score by method and task type. The table reports both <b>overall score</b> and <b>task success rate</b> as mean ± standard deviation.</p>
+<p class='lead'>The heatmap summarizes mean normalized score by method and task type. The table reports both <b>normalized score</b> and <b>task success rate</b> as mean ± standard deviation.</p>
 <div class='grid'>
 {_svg_heatmap(metrics)}
 </div>

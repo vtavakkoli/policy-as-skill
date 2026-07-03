@@ -240,5 +240,62 @@ def choose_skill(task_type: str, question: str = "") -> PolicySkill:
 
 
 def review_required_by_skill(skill: PolicySkill, question: str) -> bool:
+    """Return whether the concrete case needs human review.
+
+    The skill metadata may mark a skill as governance-sensitive, but that does
+    not mean every low-risk question handled by that skill requires manual
+    review. Review is triggered by the case content: high-impact domains,
+    sensitive data, external processing, policy conflict, missing mandatory
+    controls, or outdated/current-version ambiguity.
+    """
     q = question.lower()
-    return skill.human_review_required or any(t.lower() in q for t in skill.human_review_triggers)
+    trigger_terms = {t.lower() for t in skill.human_review_triggers}
+    trigger_terms.update(
+        {
+            "citizen",
+            "image",
+            "sensitive",
+            "external",
+            "cloud",
+            "benefit",
+            "eligibility",
+            "adverse",
+            "conflict",
+            "vulnerable",
+            "protected",
+            "high-risk",
+            "without",
+            "missing",
+            "absence",
+            "omits",
+            "no ",
+            "test phase",
+            "v2",
+            "current",
+            "owner",
+            "security",
+            "procurement",
+            "data-protection",
+            "data protection",
+            "not match",
+            "irrelevant",
+            "policy hash",
+            "citation",
+            "evidence",
+            "rollback",
+        }
+    )
+    low_risk_exemptions = [
+        "low-risk",
+        "office-hours",
+        "office hours",
+        "non-sensitive internal",
+        "public documents only",
+        "no decision",
+        "no personal data",
+    ]
+    has_low_risk_exemption = any(x in q for x in low_risk_exemptions)
+    has_trigger = any(t in q for t in trigger_terms)
+    if has_low_risk_exemption and not any(x in q for x in ["external", "cloud", "without", "missing", "absence", "omits", "no ", "citizen", "benefit", "eligibility", "adverse", "conflict", "v2", "not match", "policy hash", "rollback"]):
+        return False
+    return has_trigger

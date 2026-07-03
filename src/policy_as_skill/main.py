@@ -12,7 +12,7 @@ from statistics import mean, pstdev
 from .agents import run_method
 from .config import Config
 from .data_loader import load_policies, load_tasks
-from .evaluators import evaluate
+from .evaluators import apply_run_normalization, evaluate
 from .ollama_client import OllamaClient
 from .report_generator import generate_report
 from .retrieval import PolicyRetriever
@@ -45,6 +45,12 @@ def _aggregate(rows: list[dict], methods: list[str]) -> dict:
         "audit_completeness",
         "governance_readiness_score",
         "update_adaptation_score",
+        "decision_quality_score",
+        "evidence_quality_score",
+        "governance_quality_score",
+        "raw_quality_score",
+        "latency_efficiency_score",
+        "normalized_score",
         "task_success",
         "latency_seconds",
         "overall_score",
@@ -122,7 +128,7 @@ def main() -> None:
 
     rows: list[dict] = []
     traces: list[dict] = []
-    failures: dict[str, list[dict]] = {m: [] for m in methods}
+    runtime_failures: dict[str, list[dict]] = {m: [] for m in methods}
 
     for ti, task in enumerate(tasks, start=1):
         logger.info("Processing task %s/%s task_id=%s task_type=%s", ti, len(tasks), task.id, task.task_type)
@@ -141,28 +147,37 @@ def main() -> None:
                     **ev,
                 }
                 rows.append(row)
-                if ev["overall_score"] < 0.58:
-                    failures[method].append(
-                        {
-                            "task_id": task.id,
-                            "task_type": task.task_type,
-                            "overall_score": ev["overall_score"],
-                            "reason": "below quality threshold",
-                            "low_metrics": {
-                                k: ev[k]
-                                for k in [
-                                    "citation_precision",
-                                    "policy_ref_recall",
-                                    "evidence_faithfulness",
-                                    "governance_readiness_score",
-                                ]
-                                if ev[k] < 0.6
-                            },
-                        }
-                    )
             except Exception as e:
                 logger.exception("Task failed task_id=%s method=%s", task.id, method)
-                failures[method].append({"task_id": task.id, "method": method, "error": str(e)})
+                runtime_failures[method].append({"task_id": task.id, "method": method, "error": str(e)})
+
+    rows = apply_run_normalization(rows)
+    failures: dict[str, list[dict]] = {m: list(runtime_failures.get(m, [])) for m in methods}
+    for row in rows:
+        method = row["method"]
+        if float(row["overall_score"]) < 0.58:
+            failures[method].append(
+                {
+                    "task_id": row["task_id"],
+                    "task_type": row["task_type"],
+                    "overall_score": row["overall_score"],
+                    "reason": "below normalized quality threshold",
+                    "low_metrics": {
+                        k: row[k]
+                        for k in [
+                            "decision_accuracy",
+                            "human_review_correctness",
+                            "evidence_quality_score",
+                            "governance_quality_score",
+                            "citation_precision",
+                            "policy_ref_recall",
+                            "evidence_faithfulness",
+                            "governance_readiness_score",
+                        ]
+                        if float(row.get(k, 1.0)) < 0.6
+                    },
+                }
+            )
 
     _write_csv(cfg.result_dir / "metrics.csv", rows)
     metrics_payload = {"rows": rows, "aggregate": _aggregate(rows, methods), "manifest": manifest}
