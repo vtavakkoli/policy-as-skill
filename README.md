@@ -28,7 +28,6 @@ result/metrics.json
 result/traces.jsonl
 result/failures.json
 result/manifest.json
-result/benchmark_generated.jsonl
 ```
 
 ## Core distinction
@@ -75,14 +74,13 @@ prompt template
 policy-as-skill/
   data/
     policies/                 synthetic policy documents
-    tasks/                    curated seed tasks
+    tasks/                    curated 200-task benchmark
   src/policy_as_skill/
     main.py                   main experiment runner
     agents.py                 method implementations
     skills.py                 PolicySkill registry
     retrieval.py              BM25-like, keyword, hybrid retrieval
     evaluators.py             research metrics
-    benchmark_generator.py    deterministic synthetic benchmark generator
     report_generator.py       self-contained HTML report
     ollama_client.py          host Ollama REST client
   result/                     generated outputs
@@ -140,22 +138,30 @@ OLLAMA_ENABLED=false MAX_TASKS=8 docker compose up --build
 
 This is useful for testing Docker, metrics, traces, and report generation.
 
-## Larger research run
+## Full 200-task research run
 
-For a paper-style run, increase the benchmark size and run all generated tasks:
+The repository now contains a static balanced benchmark in `data/tasks/benchmark_tasks.jsonl` with 200 tasks:
 
-```bash
-TASKS_PER_TYPE=10 MAX_TASKS=0 docker compose up --build
+```text
+Policy question answering: 50
+Compliance checking:      50
+Risk classification:      50
+Conflict detection:       50
+Total:                   200
 ```
 
-This generates a balanced benchmark with N=10 per task type (80 tasks total). Reported figures show mean ± standard deviation across tasks.
+The default Docker configuration sets `MAX_TASKS=0`, so the normal command evaluates all 200 tasks:
 
-`MAX_TASKS=0` means evaluate all generated tasks.
+```bash
+docker compose up --build
+```
+
+`MAX_TASKS=0` means evaluate all curated tasks. Use `MAX_TASKS=8` only for a small smoke test.
 
 For local debugging without Docker:
 
 ```bash
-PYTHONPATH=src OLLAMA_ENABLED=false MAX_TASKS=8 python -m policy_as_skill.main
+PYTHONPATH=src OLLAMA_ENABLED=false MAX_TASKS=0 python -m policy_as_skill.main
 ```
 
 ## Metrics
