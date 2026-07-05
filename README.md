@@ -273,18 +273,3 @@ The platform evaluates more than answer quality:
 The platform is designed so that `expected_answer` is used **only** by `evaluators.py`.
 
 `agents.py` never uses expected answers during generation. If Ollama is unavailable, it creates deterministic offline outputs from retrieved evidence only.
-<<<<<<< HEAD
-
-## Remaining honesty note
-
-The repository now implements expert-label metadata, multiple regulated-domain policy documents, reranker and optional commercial-LLM baselines, statistical tests with confidence intervals, and manual citation-faithfulness annotation support. The only item that cannot be truthfully completed from code alone is external validity: the included case-study template must still be filled and validated by a real public-sector or enterprise policy owner before the paper claims a completed external case study.
-
-## Scientific framing
-
-The central claim is:
-
-> In regulated enterprises, AI quality is not only answer accuracy. A policy-aware agent must be traceable, reviewable, version-aware, evidence-grounded, and auditable.
-
-Policy-as-Skill makes these properties first-class measurable outputs.
-=======
->>>>>>> a571b1df0f94802da64a6a76c763d74a3ae09584
