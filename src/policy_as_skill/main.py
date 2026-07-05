@@ -11,7 +11,6 @@ from statistics import mean, pstdev
 
 from .agents import run_method
 from .annotations import load_manual_citation_annotations
-from .commercial_llm_client import CommercialLLMClient
 from .config import Config
 from .data_loader import load_policies, load_tasks
 from .evaluators import apply_run_normalization, evaluate
@@ -97,15 +96,6 @@ def main() -> None:
         enabled=cfg.ollama_enabled,
         healthcheck_seconds=cfg.healthcheck_seconds,
     )
-    commercial_client = CommercialLLMClient(
-        cfg.commercial_llm_provider,
-        cfg.commercial_llm_model,
-        cfg.commercial_llm_api_key,
-        cfg.commercial_llm_base_url,
-        cfg.timeout_seconds,
-        trace_path,
-        enabled=cfg.commercial_llm_enabled,
-    )
     annotation_path = Path(cfg.manual_citation_annotations_path)
     if not annotation_path.is_absolute():
         annotation_path = cfg.root / annotation_path
@@ -120,10 +110,6 @@ def main() -> None:
         "ollama_model": cfg.ollama_model,
         "ollama_enabled": cfg.ollama_enabled,
         "ollama_available": client.is_available(),
-        "commercial_llm_provider": cfg.commercial_llm_provider,
-        "commercial_llm_model": cfg.commercial_llm_model,
-        "commercial_llm_enabled": cfg.commercial_llm_enabled,
-        "commercial_llm_available": commercial_client.is_available(),
         "manual_citation_annotation_path": str(annotation_path),
         "manual_citation_annotation_rows": sum(v.get("manual_annotation_count", 0) for v in manual_annotations.values()),
         "seed": cfg.seed,
@@ -156,7 +142,7 @@ def main() -> None:
         logger.info("Processing task %s/%s task_id=%s task_type=%s", ti, len(tasks), task.id, task.task_type)
         for method in methods:
             try:
-                tr = run_method(method, task, retriever, client, cfg.top_k, commercial_client=commercial_client)
+                tr = run_method(method, task, retriever, client, cfg.top_k)
                 traces.append(tr)
                 append_jsonl(trace_path, {"kind": "decision_trace", **tr})
                 ev = evaluate(task, tr, manual_annotations=manual_annotations)

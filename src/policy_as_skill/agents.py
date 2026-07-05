@@ -201,7 +201,7 @@ def evidence_json(chunks: list[PolicyChunk]) -> str:
 
 
 def parse_model_json(raw: str) -> dict[str, Any] | None:
-    if not raw or raw.startswith("OLLAMA_") or raw.startswith("COMMERCIAL_LLM_"):
+    if not raw or raw.startswith("OLLAMA_"):
         return None
     raw = raw.strip()
     candidates = [raw]
@@ -533,10 +533,10 @@ Question: {task.question}"""
         return f"Policy-as-Prompt: apply the policy text directly. {schema}\nTask type: {task.task_type}\nQuestion: {task.question}\nPolicies:\n{evidence_text(chunks)}"
     if method == "Structured Policy-as-Prompt":
         return f"Policy-as-Prompt with structured policy artifacts. {schema}\nTask type: {task.task_type}\nQuestion: {task.question}\nPolicy artifacts JSON:\n{evidence_json(chunks)}"
-    if method == "Commercial LLM":
-        return f"Commercial LLM baseline without local policy retrieval. {schema}\nQuestion: {task.question}\nState uncertainty if policy evidence is missing."
-    if method == "Commercial LLM + RAG":
-        return f"Commercial LLM with reranked policy retrieval. {schema}\nAnswer only from cited policy evidence.\nQuestion: {task.question}\nEvidence:\n{evidence_json(chunks)}"
+    if method == "LLM":
+        return f"LLM baseline using the configured Ollama model without policy retrieval. {schema}\nNo trusted policy repository evidence is provided.\nBecause no retrieved evidence is available, citations must be [].\nQuestion: {task.question}\nState uncertainty if policy evidence is missing."
+    if method == "LLM + RAG":
+        return f"LLM + RAG using the same configured Ollama model with reranked policy retrieval. {schema}\nAnswer only from cited policy evidence.\nQuestion: {task.question}\nEvidence:\n{evidence_json(chunks)}"
     if method in {"Policy-as-Skill", "Policy-as-Skill No Audit"} and skill:
         return f"{skill.prompt_template}\nSelected skill metadata:\n{json.dumps(skill.to_public_dict(), indent=2)}\nQuestion: {task.question}\nTrusted evidence JSON:\n{evidence_json(chunks)}"
     return f"{schema}\nQuestion: {task.question}\nContext:\n{evidence_text(chunks)}"
@@ -556,9 +556,9 @@ def _select_evidence(method: str, task: BenchmarkTask, retriever: PolicyRetrieve
         return retriever.retrieve(task.question, top_k=top_k, mode="bm25"), None
     if method == "Structured Policy-as-Prompt":
         return retriever.retrieve(task.question, top_k=top_k, mode="hybrid"), None
-    if method == "Commercial LLM":
+    if method == "LLM":
         return [], None
-    if method == "Commercial LLM + RAG":
+    if method == "LLM + RAG":
         return retriever.retrieve_reranked(task.question, top_k=top_k, candidate_k=max(20, top_k * 4)), None
     if method in {"Policy-as-Skill", "Policy-as-Skill No Audit"} and skill:
         chunks = retriever.retrieve(task.question, top_k=top_k, scope_terms=skill.retrieval_scope, mode="hybrid")
@@ -576,7 +576,7 @@ def _select_evidence(method: str, task: BenchmarkTask, retriever: PolicyRetrieve
     return retriever.retrieve(task.question, top_k=top_k, mode="bm25"), None
 
 
-def run_method(method: str, task: BenchmarkTask, retriever: PolicyRetriever, client: OllamaClient, top_k: int = 5, commercial_client: Any | None = None) -> dict[str, Any]:
+def run_method(method: str, task: BenchmarkTask, retriever: PolicyRetriever, client: OllamaClient, top_k: int = 5) -> dict[str, Any]:
     start = time.perf_counter()
     chunks, skill = _select_evidence(method, task, retriever, top_k)
     fallback = _extractive_answer(method, task, chunks, skill)
@@ -585,12 +585,11 @@ def run_method(method: str, task: BenchmarkTask, retriever: PolicyRetriever, cli
     parsed = None
 
     if method != "Keyword Search":
-        active_client = commercial_client if method.startswith("Commercial LLM") and commercial_client is not None else client
-        raw = active_client.generate(prompt, {"method": method, "task_id": task.id, "expect_json": True})
+        raw = client.generate(prompt, {"method": method, "task_id": task.id, "expect_json": True})
         parsed = parse_model_json(raw)
     out = normalize_decision(parsed or {}, fallback)
     out["question"] = task.question
-    if not chunks and method in {"Direct LLM", "Commercial LLM"}:
+    if not chunks and method in {"Direct LLM", "LLM"}:
         # Closed-book baselines have no retrieved policy evidence.  Suppress any
         # hallucinated citations so the evidence metrics reflect the real setup.
         out["citations"] = []
@@ -625,7 +624,7 @@ def run_method(method: str, task: BenchmarkTask, retriever: PolicyRetriever, cli
         "policy_hashes": policy_hashes,
         "evidence": [c.to_dict() for c in chunks],
         "raw_model_output": raw,
-        "llm_provider": "commercial" if method.startswith("Commercial LLM") else "ollama_or_offline",
+        "llm_provider": "ollama_or_offline",
         "parsed_model_output": parsed,
         "validation": validation,
         **out,

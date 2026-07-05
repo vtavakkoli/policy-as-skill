@@ -10,15 +10,15 @@ It extends the idea of **Policy-as-Prompt** by treating policies, regulations, a
 
 The platform runs a local benchmark and compares several methods:
 
-1. **Direct LLM** — no retrieval, weak baseline.
-2. **Keyword Search** — lexical retrieval and extractive decision.
-3. **Standard RAG** — retrieved policy chunks + LLM answer.
-4. **Hybrid RAG** — BM25-like retrieval plus keyword/tag scoring.
-5. **Hybrid RAG + Reranker** — stronger retrieval baseline with deterministic second-stage reranking.
-6. **Policy-as-Prompt** — policy evidence directly encoded in prompt.
-7. **Structured Policy-as-Prompt** — policy artifacts encoded as structured JSON.
-8. **Commercial LLM** — optional commercial model baseline without local policy retrieval.
-9. **Commercial LLM + RAG** — optional commercial model with reranked policy evidence.
+1. **Direct LLM** — closed-book baseline using the configured Ollama model.
+2. **LLM** — same configured Ollama model without policy retrieval, using the generic policy-decision schema.
+3. **Keyword Search** — lexical retrieval and extractive decision.
+4. **Standard RAG** — retrieved policy chunks + LLM answer.
+5. **Hybrid RAG** — BM25-like retrieval plus keyword/tag scoring.
+6. **Hybrid RAG + Reranker** — stronger retrieval baseline with deterministic second-stage reranking.
+7. **LLM + RAG** — same configured Ollama model with reranked policy evidence.
+8. **Policy-as-Prompt** — policy evidence directly encoded in prompt.
+9. **Structured Policy-as-Prompt** — policy artifacts encoded as structured JSON.
 10. **Policy-as-Skill No Audit** — ablation with skill selection but without strict validation.
 11. **Policy-as-Skill** — full method with skill registry, scoped retrieval, required evidence checks, citation validation, human-review routing, policy hashes, and audit trace.
 
@@ -92,7 +92,6 @@ policy-as-skill/
     annotations.py            manual citation-faithfulness annotation loader
     report_generator.py       self-contained HTML report
     ollama_client.py          host Ollama REST client
-    commercial_llm_client.py  optional OpenAI-compatible / Anthropic-compatible adapter
   result/                     generated outputs
   tests/                      lightweight tests
 ```
@@ -197,27 +196,7 @@ The included policy documents are de-identified and synthetic/real-world-inspire
 
 ## Stronger baselines
 
-The default method list now includes a deterministic reranker baseline and optional commercial-LLM baselines. The commercial baselines run in deterministic fallback mode unless you explicitly enable them and provide an API key.
-
-OpenAI-compatible example:
-
-```bash
-COMMERCIAL_LLM_ENABLED=true \
-COMMERCIAL_LLM_PROVIDER=openai \
-COMMERCIAL_LLM_MODEL=gpt-4o-mini \
-COMMERCIAL_LLM_API_KEY=your_key \
-docker compose up --build
-```
-
-Anthropic-compatible example:
-
-```bash
-COMMERCIAL_LLM_ENABLED=true \
-COMMERCIAL_LLM_PROVIDER=anthropic \
-COMMERCIAL_LLM_MODEL=claude-3-5-sonnet-latest \
-COMMERCIAL_LLM_API_KEY=your_key \
-docker compose up --build
-```
+The default method list includes the same configured Ollama LLM across all model-based rows. This avoids mixing local and commercial providers in the same reported benchmark. The `LLM + RAG` baseline uses the configured `OLLAMA_MODEL` with reranked policy evidence, while `Policy-as-Skill` adds scoped skill selection, evidence validation, review routing, and audit controls.
 
 ## Statistical tests and confidence intervals
 
