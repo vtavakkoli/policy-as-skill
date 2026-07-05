@@ -110,9 +110,35 @@ def _update_adaptation(task: BenchmarkTask, trace: dict) -> float:
     return 1.0 if expected_version in citations or expected_version in evidence else 0.0
 
 
+def success_gate_failures(
+    score: float,
+    decision_accuracy: float,
+    human_review_correctness: float,
+    evidence_quality: float,
+    governance_quality: float,
+) -> list[str]:
+    """Return the exact quality gates that prevent task success.
+
+    The benchmark success rate is intentionally strict.  Exposing failed gates
+    makes it clear whether a task failed because of evidence grounding, decision
+    labeling, human-review routing, governance/audit data, or the final score.
+    """
+    failures: list[str] = []
+    if score < 0.72:
+        failures.append("normalized_score<0.72")
+    if decision_accuracy < 0.65:
+        failures.append("decision_accuracy<0.65")
+    if human_review_correctness < 0.90:
+        failures.append("human_review_correctness<0.90")
+    if evidence_quality < 0.60:
+        failures.append("evidence_quality<0.60")
+    if governance_quality < 0.75:
+        failures.append("governance_quality<0.75")
+    return failures
+
+
 def _task_success(score: float, decision_accuracy: float, human_review_correctness: float, evidence_quality: float, governance_quality: float) -> float:
-    success = score >= 0.72 and decision_accuracy >= 0.65 and human_review_correctness >= 0.90 and evidence_quality >= 0.60 and governance_quality >= 0.75
-    return 1.0 if success else 0.0
+    return 0.0 if success_gate_failures(score, decision_accuracy, human_review_correctness, evidence_quality, governance_quality) else 1.0
 
 
 def _quality_components(
@@ -185,6 +211,7 @@ def evaluate(task: BenchmarkTask, trace: dict, manual_annotations: dict | None =
         "task_success": round(success, 6),
         "latency_seconds": round(float(trace.get("latency_seconds", 0)), 6),
         "overall_score": round(raw_quality, 6),
+        "success_gate_failures": ";".join(success_gate_failures(raw_quality, decision_accuracy, hrc, evidence_quality, governance_quality)),
         "manual_annotation_count": int(manual.get("manual_annotation_count", 0)) if manual else 0,
     }
 
@@ -210,11 +237,13 @@ def apply_run_normalization(rows: list[dict]) -> list[dict]:
         r["latency_efficiency_score"] = round(efficiency, 6)
         r["normalized_score"] = round(normalized, 6)
         r["overall_score"] = round(normalized, 6)
-        r["task_success"] = _task_success(
+        gate_failures = success_gate_failures(
             normalized,
             float(r.get("decision_accuracy", 0.0)),
             float(r.get("human_review_correctness", 0.0)),
             float(r.get("evidence_quality_score", 0.0)),
             float(r.get("governance_quality_score", 0.0)),
         )
+        r["success_gate_failures"] = ";".join(gate_failures)
+        r["task_success"] = 0.0 if gate_failures else 1.0
     return rows

@@ -16,6 +16,179 @@ logger = logging.getLogger(__name__)
 
 VALID_DECISIONS = {"allowed", "not_allowed", "conditional", "needs_review", "unknown"}
 
+# Canonical decision vocabulary used by all model-based methods.  Small LLMs
+# frequently put natural-language phrases such as "Non-compliant" or "Requires
+# further context" into the decision field.  Without this mapping, otherwise
+# meaningful outputs are scored as "unknown", which made the closed-book Direct
+# LLM baseline look artificially broken.
+_DECISION_SYNONYMS: dict[str, tuple[str, ...]] = {
+    "not_allowed": (
+        "not_allowed",
+        "not allowed",
+        "no",
+        "non compliant",
+        "non-compliant",
+        "not compliant",
+        "prohibited",
+        "forbidden",
+        "disallowed",
+        "blocked",
+        "must not",
+        "cannot proceed",
+        "may not proceed",
+        "not authorized",
+        "unauthorized",
+        "rejected",
+    ),
+    "needs_review": (
+        "needs_review",
+        "needs review",
+        "requires review",
+        "require review",
+        "human review",
+        "manual review",
+        "policy owner review",
+        "escalate",
+        "escalation",
+        "requires approval",
+        "needs approval",
+        "high risk",
+        "high-risk",
+        "risk is high",
+        "requires further context",
+        "requires policy context",
+        "route to review",
+    ),
+    "conditional": (
+        "conditional",
+        "conditionally allowed",
+        "allowed with conditions",
+        "permitted with conditions",
+        "approve with conditions",
+        "requires controls",
+        "requires safeguards",
+        "requires logging",
+        "requires transparency",
+        "requires dpa",
+        "requires security assessment",
+        "may be used only",
+        "may proceed if",
+        "can proceed if",
+        "policy dependent",
+        "context dependent",
+    ),
+    "allowed": (
+        "allowed",
+        "yes",
+        "compliant",
+        "permitted",
+        "approved",
+        "acceptable",
+        "low risk",
+        "low-risk",
+        "may proceed",
+        "can proceed",
+        "no review required",
+    ),
+    "unknown": (
+        "unknown",
+        "uncertain",
+        "undetermined",
+        "cannot determine",
+        "cannot be determined",
+        "cannot be definitively answered",
+        "insufficient information",
+        "insufficient evidence",
+        "no policy context",
+        "cannot answer",
+    ),
+}
+
+_BOOL_TRUE = {"true", "yes", "y", "1", "required", "needs_review", "review", "human_review", "mandatory"}
+_BOOL_FALSE = {"false", "no", "n", "0", "not_required", "not required", "none", "low_risk", "low risk"}
+
+
+def _clean_label(value: Any) -> str:
+    text = str(value or "").strip().lower()
+    text = re.sub(r"[`'\"{}\[\]()]", " ", text)
+    text = text.replace("_", " ").replace("-", " ")
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+def canonicalize_decision(value: Any, *, fallback: str = "unknown") -> str:
+    """Map free-form model decisions to the benchmark decision enum.
+
+    The function is intentionally conservative: explicit uncertainty remains
+    ``unknown`` unless the model also asks for review/escalation.  This fixes
+    schema-format failures without reading the benchmark's expected label.
+    """
+    text = _clean_label(value)
+    if not text:
+        return fallback if fallback in VALID_DECISIONS else "unknown"
+    compact = text.replace(" ", "_")
+    if compact in VALID_DECISIONS:
+        return compact
+
+    def phrase_matches(phrase: str) -> bool:
+        phrase_clean = _clean_label(phrase)
+        if not phrase_clean:
+            return False
+        # Short labels such as "no" and "yes" are decision labels only when
+        # they are the whole field.  Otherwise, "no policy context" or
+        # "no review required" would be misclassified.
+        if len(phrase_clean) <= 3 and " " not in phrase_clean:
+            return phrase_clean == text
+        return phrase_clean == text or re.search(rf"\b{re.escape(phrase_clean)}\b", text) is not None
+
+    # Explicit uncertainty and explicit low-risk/no-review labels are handled
+    # before the generic review/allowed words because they often contain words
+    # such as "review" or "no".
+    for phrase in _DECISION_SYNONYMS["unknown"]:
+        if phrase_matches(phrase):
+            return "unknown"
+    if phrase_matches("no review required"):
+        return "allowed"
+
+    # Negation must be handled before the generic "allowed" / "compliant"
+    # patterns so that "not allowed" is not classified as allowed.
+    for decision in ("not_allowed", "needs_review", "conditional", "allowed"):
+        for phrase in _DECISION_SYNONYMS[decision]:
+            if phrase_matches(phrase):
+                return decision
+
+    # Last-resort interpretation for long natural-language decisions.  This is
+    # useful when a model puts the answer text into the decision field.
+    if any(w in text for w in ["must", "required", "requires", "should", "where possible", "only if"]):
+        if any(w in text for w in ["review", "escalat", "policy owner", "human"]):
+            return "needs_review"
+        return "conditional"
+    return fallback if fallback in VALID_DECISIONS else "unknown"
+
+
+def _normalize_bool(value: Any, fallback: bool) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    text = _clean_label(value)
+    if text in _BOOL_TRUE or any(p in text for p in ["human review", "requires review", "escalat", "approval required"]):
+        return True
+    if text in _BOOL_FALSE or any(p in text for p in ["not required", "no review", "low risk only"]):
+        return False
+    return fallback
+
+
+def _normalize_citations(value: Any) -> list[str]:
+    if isinstance(value, list):
+        return [str(x).strip() for x in value if str(x).strip()]
+    if isinstance(value, str) and value.strip():
+        # Accept common LLM forms such as "a.md#x, b.md#y" while still allowing
+        # the validator to remove citations that are not in retrieved evidence.
+        parts = re.split(r"[,;\n]+", value)
+        return [p.strip() for p in parts if p.strip() and p.strip().lower() not in {"none", "n/a", "[]"}]
+    return []
+
 
 def evidence_text(chunks: list[PolicyChunk]) -> str:
     return "\n\n".join(
@@ -247,20 +420,36 @@ def _generic_review_required(question: str) -> bool:
 
 
 def normalize_decision(obj: dict[str, Any], fallback: dict[str, Any]) -> dict[str, Any]:
+    """Normalize a parsed model output into the trace schema.
+
+    This function deliberately performs schema repair but not oracle repair: it
+    never reads the expected answer.  It only canonicalizes model phrasing into
+    the allowed enum, normalizes booleans, and keeps citations in a validator-
+    checkable form.
+    """
     out = dict(fallback)
     if not obj:
+        out["decision"] = canonicalize_decision(out.get("decision"), fallback="unknown")
         return out
     if isinstance(obj.get("answer"), str) and obj["answer"].strip():
         out["answer"] = obj["answer"].strip()
-    if isinstance(obj.get("decision"), str):
-        d = obj["decision"].strip().lower().replace(" ", "_").replace("-", "_")
-        out["decision"] = d if d in VALID_DECISIONS else out["decision"]
+
+    # Small models often place an explanatory sentence in ``decision``.  First
+    # try the explicit decision field; then fall back to the answer/reasoning
+    # text only when the explicit field is empty or unusable.
+    fallback_decision = out.get("decision", "unknown")
+    model_decision = canonicalize_decision(obj.get("decision"), fallback=str(fallback_decision))
+    if model_decision == fallback_decision and obj.get("decision") not in VALID_DECISIONS:
+        joined = " ".join(str(obj.get(k, "")) for k in ["answer", "reasoning_summary"])
+        model_decision = canonicalize_decision(joined, fallback=model_decision)
+    out["decision"] = model_decision if model_decision in VALID_DECISIONS else "unknown"
+
     if isinstance(obj.get("reasoning_summary"), str) and obj["reasoning_summary"].strip():
         out["reasoning_summary"] = obj["reasoning_summary"].strip()
-    if isinstance(obj.get("citations"), list):
-        out["citations"] = [str(x) for x in obj["citations"] if str(x).strip()]
+    if "citations" in obj:
+        out["citations"] = _normalize_citations(obj.get("citations"))
     if "human_review_required" in obj:
-        out["human_review_required"] = bool(obj["human_review_required"])
+        out["human_review_required"] = _normalize_bool(obj.get("human_review_required"), bool(out.get("human_review_required", False)))
     if "confidence" in obj:
         try:
             out["confidence"] = max(0.0, min(1.0, float(obj["confidence"])))
@@ -269,6 +458,8 @@ def normalize_decision(obj: dict[str, Any], fallback: dict[str, Any]) -> dict[st
     for key in ["risks", "missing_information"]:
         if isinstance(obj.get(key), list):
             out[key] = [str(x) for x in obj[key]]
+        elif isinstance(obj.get(key), str) and obj[key].strip():
+            out[key] = [obj[key].strip()]
     return out
 
 
@@ -316,9 +507,22 @@ def validate_output(out: dict[str, Any], chunks: list[PolicyChunk], skill: Polic
 
 
 def _prompt_for(method: str, task: BenchmarkTask, chunks: list[PolicyChunk], skill: PolicySkill | None, retriever: PolicyRetriever) -> str:
-    schema = "Return only JSON with answer, decision, reasoning_summary, citations, human_review_required, confidence, risks, missing_information."
+    schema = """Return only valid JSON with keys: answer, decision, reasoning_summary, citations, human_review_required, confidence, risks, missing_information.
+The decision value must be exactly one of: allowed, not_allowed, conditional, needs_review, unknown.
+Use citations only from supplied evidence. Do not invent citations.
+Use human_review_required as a JSON boolean, not a string or list."""
     if method == "Direct LLM":
-        return f"{schema}\nQuestion: {task.question}\nNo policy context is provided. State uncertainty if needed."
+        return f"""Closed-book Direct LLM baseline.
+{schema}
+No trusted policy repository evidence is provided.
+Because no retrieved evidence is available, citations must be [].
+Choose decision conservatively:
+- conditional: the answer describes required controls, safeguards, logging, transparency, or approval conditions.
+- needs_review: uncertainty, high risk, policy conflict, citizen/sensitive-data impact, adverse impact, or policy-owner escalation is involved.
+- not_allowed: the action is prohibited, non-compliant, blocked, or must not proceed.
+- allowed: clearly low-risk and permitted.
+- unknown: the decision cannot be inferred without policy evidence.
+Question: {task.question}"""
     if method == "Standard RAG":
         return f"{schema}\nAnswer with citations from the provided context only.\nQuestion: {task.question}\nContext:\n{evidence_text(chunks)}"
     if method == "Hybrid RAG":
@@ -386,6 +590,13 @@ def run_method(method: str, task: BenchmarkTask, retriever: PolicyRetriever, cli
         parsed = parse_model_json(raw)
     out = normalize_decision(parsed or {}, fallback)
     out["question"] = task.question
+    if not chunks and method in {"Direct LLM", "Commercial LLM"}:
+        # Closed-book baselines have no retrieved policy evidence.  Suppress any
+        # hallucinated citations so the evidence metrics reflect the real setup.
+        out["citations"] = []
+        out.setdefault("missing_information", [])
+        if "policy evidence" not in out["missing_information"]:
+            out["missing_information"].append("policy evidence")
 
     strict_validation = method == "Policy-as-Skill"
     validation = validate_output(out, chunks, skill, strict=strict_validation)

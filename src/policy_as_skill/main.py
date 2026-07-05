@@ -177,13 +177,14 @@ def main() -> None:
     failures: dict[str, list[dict]] = {m: list(runtime_failures.get(m, [])) for m in methods}
     for row in rows:
         method = row["method"]
-        if float(row["overall_score"]) < 0.58:
+        if float(row.get("task_success", 0.0)) < 1.0:
             failures[method].append(
                 {
                     "task_id": row["task_id"],
                     "task_type": row["task_type"],
                     "overall_score": row["overall_score"],
-                    "reason": "below normalized quality threshold",
+                    "reason": "failed strict task-success gates",
+                    "success_gate_failures": str(row.get("success_gate_failures", "")).split(";") if row.get("success_gate_failures") else [],
                     "low_metrics": {
                         k: row[k]
                         for k in [
