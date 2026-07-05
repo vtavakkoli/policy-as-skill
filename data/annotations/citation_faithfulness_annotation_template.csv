@@ -1,0 +1,2 @@
+task_id,method,citation_id,answer_span,evidence_span,supported,contradiction,policy_ref_correct,annotator_id,reviewed_at,notes
+T001,Policy-as-Skill,example_policy.md#section@v1,short answer claim,supporting policy sentence,yes,no,yes,A1,2026-07-04,example row; delete before real annotation

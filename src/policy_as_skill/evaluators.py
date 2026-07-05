@@ -139,14 +139,19 @@ def _quality_components(
     return decision_quality, evidence_quality, governance_quality, raw_quality
 
 
-def evaluate(task: BenchmarkTask, trace: dict) -> dict:
+def evaluate(task: BenchmarkTask, trace: dict, manual_annotations: dict | None = None) -> dict:
     answer = str(trace.get("answer", ""))
     sim = token_similarity(task.expected_answer, answer)
     citation_coverage, citation_precision, policy_ref_recall = _citation_stats(task, trace)
     evidence_text = " ".join(str(e.get("text", "")) for e in trace.get("evidence", []) or [])
     faithfulness = containment(answer, evidence_text) if evidence_text else 0.0
+    manual = (manual_annotations or {}).get((task.id, str(trace.get("method", ""))), {})
+    if manual:
+        faithfulness = float(manual.get("manual_evidence_faithfulness", faithfulness))
     unsupported = _unsupported_claim_rate(trace)
     contradiction = _contradiction_rate(task, trace)
+    if manual and manual.get("manual_contradiction_rate") is not None:
+        contradiction = max(contradiction, float(manual.get("manual_contradiction_rate", 0.0)))
     decision_accuracy = _clip01(1.0 - contradiction)
     traceability = _traceability(trace)
     hrc = 1.0 if bool(trace.get("human_review_required")) == expected_review(task) else 0.0
@@ -180,6 +185,7 @@ def evaluate(task: BenchmarkTask, trace: dict) -> dict:
         "task_success": round(success, 6),
         "latency_seconds": round(float(trace.get("latency_seconds", 0)), 6),
         "overall_score": round(raw_quality, 6),
+        "manual_annotation_count": int(manual.get("manual_annotation_count", 0)) if manual else 0,
     }
 
 

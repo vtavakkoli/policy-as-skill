@@ -23,6 +23,10 @@ TAG_SYNONYMS = {
     "evidence-grounding": {"evidence", "citation", "cited", "grounded", "unsupported"},
     "access-control": {"access", "role", "permission", "restricted", "scope"},
     "pilot-policy-v2": {"v2", "current", "owner", "rollback", "pilot"},
+    "pilot-policy-v1": {"v1", "legacy", "old", "previous", "pilot"},
+    "policy-update": {"update", "version", "current", "newer", "changed", "replacement", "supersedes"},
+    "accessibility-fairness": {"accessibility", "fairness", "bias", "language", "multilingual", "public-facing", "employee-facing"},
+    "prohibited-use": {"prohibited", "forbidden", "must not", "infer", "sensitive attributes", "fully automated", "adverse"},
 }
 
 
@@ -141,6 +145,44 @@ class PolicyRetriever:
                 PolicyChunk(c.source, c.chunk_id, c.text, float(s), c.version, c.sha256, list(c.tags))
             )
         return selected
+
+
+    def _intent_bonus(self, query: str, c: PolicyChunk) -> float:
+        """Lightweight deterministic reranker used as a stronger retrieval baseline.
+
+        It rewards exact phrase overlap, policy-domain tags, negation/conflict
+        cues, and decision-critical terms. This is not a neural reranker, but it
+        gives the benchmark a stronger second-stage retrieval baseline without
+        adding non-standard dependencies.
+        """
+        q = query.lower()
+        text = c.text.lower()
+        score = 0.0
+        phrases = [
+            "human review", "audit trail", "policy hash", "external cloud",
+            "data protection", "access control", "not allowed", "must not",
+            "stricter rule", "policy conflict", "citation validation",
+            "accessibility", "language fairness", "fully automated",
+        ]
+        score += 0.45 * sum(1 for p in phrases if p in q and p in text)
+        q_tags = {tag for tag, syns in TAG_SYNONYMS.items() if tag in q or any(w in q for w in syns)}
+        score += 0.35 * len(q_tags & set(c.tags))
+        if any(w in q for w in ["without", "missing", "no ", "not ", "must not"]) and any(w in text for w in ["must", "required", "not allowed", "prohibited"]):
+            score += 0.55
+        if any(w in q for w in ["conflict", "stricter", "less strict", "which rule wins"]) and "policy-conflict" in c.tags:
+            score += 0.75
+        return score
+
+    def retrieve_reranked(self, query: str, top_k: int = 5, candidate_k: int = 20, scope_terms: list[str] | None = None) -> list[PolicyChunk]:
+        first_pass = self.retrieve(query, top_k=max(candidate_k, top_k), scope_terms=scope_terms, mode="hybrid")
+        reranked = []
+        by_id = {c.citation_id: i for i, c in enumerate(self.chunks)}
+        for rank, c in enumerate(first_pass):
+            idx = by_id.get(c.citation_id, 0)
+            base = self._bm25_score(query, c, idx) + 0.25 * self._keyword_score(query, c)
+            s = base + self._intent_bonus(query, c) + self._scope_bonus(c, scope_terms) + self._version_bonus(query, c) + 0.01 * (candidate_k - rank)
+            reranked.append((s, c))
+        return [PolicyChunk(c.source, c.chunk_id, c.text, float(s), c.version, c.sha256, list(c.tags)) for s, c in sorted(reranked, key=lambda x: x[0], reverse=True)[:top_k]]
 
     def keyword(self, query: str, top_k: int = 5) -> list[PolicyChunk]:
         return self.retrieve(query, top_k=top_k, mode="keyword")

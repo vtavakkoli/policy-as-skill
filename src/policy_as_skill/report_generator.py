@@ -241,8 +241,24 @@ def generate_report(result_dir: Path, metrics: list[dict], traces: list[dict], f
     ]
     agg = _group_stats(metrics, "method", cols)
     ex = _example_trace(traces)
-    artifact_links = ["metrics.csv", "metrics.json", "traces.jsonl", "failures.json", "manifest.json"]
+    artifact_links = ["metrics.csv", "metrics.json", "statistics.csv", "statistics.json", "traces.jsonl", "failures.json", "manifest.json"]
     link_html = "".join(f"<a class='pill' href='{html.escape(x)}'>{html.escape(x)}</a>" for x in artifact_links)
+    stats_path = result_dir / "statistics.json"
+    stats_rows = json.loads(stats_path.read_text(encoding="utf-8")) if stats_path.exists() else []
+    stats_rows_fmt = [
+        {
+            "baseline_method": r.get("baseline_method", ""),
+            "n_pairs": r.get("n_pairs", ""),
+            "mean_difference": f"{float(r.get('mean_difference', 0.0)):.3f}",
+            "ci95": f"[{float(r.get('ci95_low', 0.0)):.3f}, {float(r.get('ci95_high', 0.0)):.3f}]",
+            "target_wins": r.get("target_wins", ""),
+            "baseline_wins": r.get("baseline_wins", ""),
+            "sign_test_p": r.get("sign_test_p", ""),
+        }
+        for r in stats_rows
+    ]
+
+    stats_table_html = _table(stats_rows_fmt, ["baseline_method", "n_pairs", "mean_difference", "ci95", "target_wins", "baseline_wins", "sign_test_p"]) if stats_rows_fmt else "<p class='muted'>No statistics available.</p>"
 
     worst_rows = sorted(metrics, key=lambda r: float(r["overall_score"]))[:12]
     worst_rows_fmt = []
@@ -417,7 +433,13 @@ pre {{ background:#0f172a; color:#e2e8f0; padding:18px; border-radius:18px; over
 </section>
 
 <section>
-<h2>H. Failure Analysis</h2>
+<h2>H. Statistical Tests and Confidence Intervals</h2>
+<p class='lead'>Pairwise statistics compare <b>Policy-as-Skill</b> against each baseline on the per-task normalized score. The table reports paired mean differences, bootstrap 95% confidence intervals, target wins, baseline wins, and an exact two-sided sign-test p-value.</p>
+{stats_table_html}
+</section>
+
+<section>
+<h2>I. Failure Analysis</h2>
 <p class='lead'>Failures are rows below the configured quality threshold or runtime exceptions. This section helps separate retrieval failures, generation failures, citation failures, and governance failures.</p>
 {_failure_summary(failures)}
 <h3 style='margin:16px 0 12px'>Worst metric rows</h3>
@@ -425,13 +447,13 @@ pre {{ background:#0f172a; color:#e2e8f0; padding:18px; border-radius:18px; over
 </section>
 
 <section>
-<h2>I. Reproducibility Manifest</h2>
+<h2>J. Reproducibility Manifest</h2>
 <p>{link_html}</p>
 <pre>{html.escape(json.dumps(manifest or {}, indent=2, ensure_ascii=False))}</pre>
 </section>
 
 <section>
-<h2>J. Paper-Oriented Conclusion</h2>
+<h2>K. Paper-Oriented Conclusion</h2>
 <p>This platform operationalizes the central research claim: in regulated enterprises, AI quality is not only answer accuracy. A policy-aware agent must be traceable, reviewable, version-aware, evidence-grounded, and auditable. The <b>Policy-as-Skill</b> method is designed to make these properties first-class measurable outputs rather than informal prompt instructions.</p>
 </section>
 </main>

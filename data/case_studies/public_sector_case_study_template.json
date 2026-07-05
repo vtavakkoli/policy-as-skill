@@ -1,0 +1,9 @@
+{
+  "case_study_id": "PS-CASE-001",
+  "status": "template_not_external_validated",
+  "domain": "public_sector_ai_service",
+  "description": "Template for a de-identified public-sector or enterprise policy-aware decision-support case study.",
+  "minimum_required_real_tasks": 20,
+  "policy_owner_validation_required": true,
+  "notes": "Fill this with real partner-approved data before claiming external validity."
+}
