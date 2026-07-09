@@ -79,7 +79,7 @@ prompt template
 policy-as-skill/
   data/
     policies/                 policy documents across public-sector, privacy, cloud, cyber, and HR domains
-    tasks/                    curated 200-task benchmark
+    tasks/                    curated 600-task benchmark
     annotations/              expert labels and manual citation-faithfulness templates
     case_studies/             public-sector / enterprise case-study template
   src/policy_as_skill/
@@ -147,19 +147,19 @@ OLLAMA_ENABLED=false MAX_TASKS=8 docker compose up --build
 
 This is useful for testing Docker, metrics, traces, and report generation.
 
-## Full 200-task research run
+## Full 600-task research run
 
-The repository now contains a static balanced expert-labeled benchmark in `data/tasks/benchmark_tasks.jsonl` with 200 tasks:
+The repository now contains a static balanced expert-labeled benchmark in `data/tasks/benchmark_tasks.jsonl` with 600 tasks:
 
 ```text
-Policy question answering: 50
-Compliance checking:      50
-Risk classification:      50
-Conflict detection:       50
-Total:                   200
+Policy question answering: 150
+Compliance checking:      150
+Risk classification:      150
+Conflict detection:       150
+Total:                   600
 ```
 
-The default Docker configuration sets `MAX_TASKS=0`, so the normal command evaluates all 200 tasks:
+The default Docker configuration sets `MAX_TASKS=0`, so the normal command evaluates all 600 tasks:
 
 ```bash
 docker compose up --build
