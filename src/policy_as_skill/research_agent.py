@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import time
 from typing import Any
 
@@ -8,6 +9,7 @@ from .data_loader import BenchmarkTask
 from .governance import assess_policy
 from .ollama_client import OllamaClient
 from .retrieval import PolicyChunk, PolicyRetriever
+from .skill_contract import build_formal_contract, validate_runtime_context
 from .skills import PolicySkill
 from .utils import first_sentence, now, stable_hash, token_similarity, tokens
 
@@ -86,7 +88,11 @@ def _run_pas_variant(method: str, task: BenchmarkTask, retriever: PolicyRetrieve
     use_controller, use_audit = _pas_flags(method)
     chunks, skill = _select_evidence("Policy-as-Skill", task, retriever, top_k)
     fallback = _research_fallback(task, chunks, use_controller=use_controller)
+    formal_contract = build_formal_contract(skill) if skill else None
+    context_validation = validate_runtime_context(skill, task.task_type, task.question, chunks) if skill else {}
     prompt = _prompt_for("Policy-as-Skill", task, chunks, skill, retriever)
+    if formal_contract is not None:
+        prompt += "\nExecutable Policy-as-Skill contract S=<n,v,R,E,D,H,A,F,P,C>:\n" + json.dumps(formal_contract.to_dict(), ensure_ascii=False, indent=2)
     raw = client.generate(prompt, {"method": canonical_method, "task_id": task.id, "expect_json": True})
     parsed = parse_model_json(raw)
     out = normalize_decision(parsed or {}, fallback)
@@ -100,6 +106,7 @@ def _run_pas_variant(method: str, task: BenchmarkTask, retriever: PolicyRetrieve
         out["human_review_required"] = controller.human_review_required
         out["confidence"] = min(float(out.get("confidence", 0.5)), controller.confidence)
     validation = _validate_citations(out, chunks, skill, strict=use_audit)
+    validation.update(context_validation)
     validation.update({
         "research_ablation": canonical_method,
         "generic_policy_controller": use_controller,
@@ -114,7 +121,8 @@ def _run_pas_variant(method: str, task: BenchmarkTask, retriever: PolicyRetrieve
     trace = {
         "timestamp": now(), "method": canonical_method, "task_id": task.id, "task_type": task.task_type, "question": task.question,
         "selected_skill": skill.name if skill else None, "policy_skill_version": skill.version if skill else None, "skill_metadata": skill.to_public_dict() if skill else None,
-        "prompt_version": "research-prompt-v3", "prompt_hash": stable_hash(prompt) if use_audit else "",
+        "formal_skill_contract": formal_contract.to_dict() if formal_contract else None,
+        "prompt_version": "research-prompt-v3.1", "prompt_hash": stable_hash(prompt) if use_audit else "",
         "policy_hashes": sorted({f"{c.source}@{c.version}:{c.sha256}" for c in chunks}) if use_audit else [],
         "evidence": [c.to_dict() for c in chunks], "raw_model_output": raw, "llm_provider": "ollama_or_offline", "parsed_model_output": parsed, "validation": validation,
         **out, "latency_seconds": time.perf_counter() - start,
