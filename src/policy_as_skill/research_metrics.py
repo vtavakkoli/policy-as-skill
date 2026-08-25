@@ -8,6 +8,7 @@ from typing import Any
 
 from .evaluators import apply_run_normalization as _legacy_apply_run_normalization
 from .evaluators import evaluate as _legacy_evaluate
+from .evaluators import expected_review as _legacy_expected_review
 
 DECISION_LABELS = ("allowed", "not_allowed", "conditional", "needs_review", "unknown")
 
@@ -17,7 +18,7 @@ def evaluate(task, trace: dict, manual_annotations: dict | None = None) -> dict:
     base = _legacy_evaluate(task, trace, manual_annotations=manual_annotations)
     expected_decision = str(task.expected_decision or "unknown")
     predicted_decision = str(trace.get("decision", "unknown"))
-    expected_review = bool(task.expected_human_review) if task.expected_human_review is not None else False
+    expected_review = bool(task.expected_human_review) if task.expected_human_review is not None else bool(_legacy_expected_review(task))
     predicted_review = bool(trace.get("human_review_required", False))
     base["expected_decision"] = expected_decision
     base["predicted_decision"] = predicted_decision
