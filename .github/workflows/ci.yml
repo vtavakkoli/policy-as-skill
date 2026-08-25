@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, reviewer-hardening]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install test dependency
+        run: python -m pip install --upgrade pip pytest
+      - name: Unit tests
+        env:
+          PYTHONPATH: src
+        run: pytest -q
+      - name: Offline research smoke test
+        env:
+          PYTHONPATH: src
+          OLLAMA_ENABLED: "false"
+          MAX_TASKS: "4"
+          BOOTSTRAP_ITERATIONS: "100"
+          EVALUATION_SPLIT: development
+          BENCHMARK_PATH: data/tasks/benchmark_tasks.jsonl
+          BENCHMARK_MANIFEST_PATH: data/tasks/development_manifest.json
+        run: python -m policy_as_skill.main
+      - name: Verify research artifacts
+        run: |
+          test -s result/report.html
+          test -s result/paper_tables.md
+          test -s result/research_summary.json
+          test -s result/sensitivity.json
+          test -s result/system_profile.json
