@@ -19,8 +19,8 @@ PAS_ALIASES = {"Policy-as-Skill No Audit": PAS_CONTROLLER}
 PAS_VARIANTS = {PAS_RETRIEVAL, PAS_CONTROLLER, PAS_AUDIT, PAS_FULL, *PAS_ALIASES}
 
 
-def _research_fallback(task: BenchmarkTask, chunks: list[PolicyChunk]) -> dict[str, Any]:
-    assessment = assess_policy(task.task_type, task.question, [c.to_dict() for c in chunks])
+def _research_fallback(task: BenchmarkTask, chunks: list[PolicyChunk], *, use_controller: bool) -> dict[str, Any]:
+    """Offline-only fallback that preserves the requested ablation semantics."""
     selected = []
     q = " ".join(tokens(task.question))
     for c in chunks:
@@ -28,13 +28,24 @@ def _research_fallback(task: BenchmarkTask, chunks: list[PolicyChunk]) -> dict[s
         ranked = sorted(candidates, key=lambda s: token_similarity(q, s), reverse=True)
         if ranked:
             selected.append(first_sentence(ranked[0] + ".", 240))
+    if use_controller:
+        assessment = assess_policy(task.task_type, task.question, [c.to_dict() for c in chunks])
+        decision = assessment.decision
+        review = assessment.human_review_required
+        confidence = assessment.confidence if chunks else 0.15
+        reasoning = assessment.rationale
+    else:
+        decision = "unknown"
+        review = False
+        confidence = 0.20 if chunks else 0.10
+        reasoning = "Offline fallback for a no-controller ablation; evidence is returned but no governed decision is inferred."
     return {
         "answer": " ".join(selected[:2]) if selected else "Insufficient trusted policy evidence was retrieved.",
-        "decision": assessment.decision,
-        "reasoning_summary": assessment.rationale,
+        "decision": decision,
+        "reasoning_summary": reasoning,
         "citations": [c.citation_id for c in chunks[:3]],
-        "human_review_required": assessment.human_review_required,
-        "confidence": assessment.confidence if chunks else 0.15,
+        "human_review_required": review,
+        "confidence": confidence,
         "risks": [],
         "missing_information": [] if chunks else ["policy evidence"],
     }
@@ -74,7 +85,7 @@ def _run_pas_variant(method: str, task: BenchmarkTask, retriever: PolicyRetrieve
     canonical_method = PAS_ALIASES.get(method, method)
     use_controller, use_audit = _pas_flags(method)
     chunks, skill = _select_evidence("Policy-as-Skill", task, retriever, top_k)
-    fallback = _research_fallback(task, chunks)
+    fallback = _research_fallback(task, chunks, use_controller=use_controller)
     prompt = _prompt_for("Policy-as-Skill", task, chunks, skill, retriever)
     raw = client.generate(prompt, {"method": canonical_method, "task_id": task.id, "expect_json": True})
     parsed = parse_model_json(raw)
@@ -89,7 +100,15 @@ def _run_pas_variant(method: str, task: BenchmarkTask, retriever: PolicyRetrieve
         out["human_review_required"] = controller.human_review_required
         out["confidence"] = min(float(out.get("confidence", 0.5)), controller.confidence)
     validation = _validate_citations(out, chunks, skill, strict=use_audit)
-    validation.update({"research_ablation": canonical_method, "generic_policy_controller": use_controller, "audit_controls_enabled": use_audit, "legacy_benchmark_phrase_controller_used": False, "model_decision_before_control": model_decision, "model_review_before_control": model_review})
+    validation.update({
+        "research_ablation": canonical_method,
+        "generic_policy_controller": use_controller,
+        "audit_controls_enabled": use_audit,
+        "legacy_benchmark_phrase_controller_used": False,
+        "model_decision_before_control": model_decision,
+        "model_review_before_control": model_review,
+        "offline_fallback_preserves_ablation": True,
+    })
     if controller is not None:
         validation["controller_assessment"] = controller.to_dict()
     trace = {
