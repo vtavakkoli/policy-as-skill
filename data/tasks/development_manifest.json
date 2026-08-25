@@ -1,0 +1,17 @@
+{
+  "split": "development",
+  "task_count": 600,
+  "balanced_task_types": {
+    "policy_question_answering": 150,
+    "compliance_check": 150,
+    "risk_classification": 150,
+    "policy_conflict_detection": 150
+  },
+  "model_parameter_training_on_benchmark": false,
+  "model_fine_tuning_on_benchmark": false,
+  "created_without_controller_feedback": false,
+  "system_development_informed": true,
+  "label_status": "single-expert curated reference labels",
+  "policy_corpus_status": "synthetic/de-identified real-world-inspired research fixtures",
+  "claim_guidance": "These tasks are unseen by the LLM at the parameter-training level, but error analysis on this benchmark informed system/controller development. Use a separately frozen test set for system-level held-out claims."
+}
