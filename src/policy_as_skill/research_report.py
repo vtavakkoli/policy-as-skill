@@ -36,9 +36,9 @@ def _write_paper_tables(result_dir: Path, summary: dict[str, dict[str, Any]]) ->
     lines += ["", "## Evidence grounding", "", "| Method | Citation precision | Policy-reference recall | Evidence faithfulness | Unsupported claim rate |", "|---|---:|---:|---:|---:|"]
     for m, s in summary.items():
         lines.append(f"| {m} | {s['citation_precision']:.3f} | {s['policy_ref_recall']:.3f} | {s['evidence_faithfulness']:.3f} | {s['unsupported_claim_rate']:.3f} |")
-    lines += ["", "## Governance and efficiency", "", "| Method | Audit completeness | Traceability | Governance quality | Governance-readiness index | Mean latency (s) |", "|---|---:|---:|---:|---:|---:|"]
+    lines += ["", "## Governance and efficiency", "", "| Method | Common trace completeness | Native audit completeness | Traceability | Governance quality | Governance-readiness index | Mean latency (s) |", "|---|---:|---:|---:|---:|---:|---:|"]
     for m, s in summary.items():
-        lines.append(f"| {m} | {s['audit_completeness']:.3f} | {s['traceability_score']:.3f} | {s['governance_quality_score']:.3f} | {s['governance_readiness_index']:.3f} | {s['latency_seconds_mean']:.3f} |")
+        lines.append(f"| {m} | {s['common_trace_completeness']:.3f} | {s['audit_completeness']:.3f} | {s['traceability_score']:.3f} | {s['governance_quality_score']:.3f} | {s['governance_readiness_index']:.3f} | {s['latency_seconds_mean']:.3f} |")
     (result_dir / "paper_tables.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -62,7 +62,7 @@ def generate_report(result_dir: Path, rows: list[dict], traces: list[dict], fail
         ci = s["decision_exact_accuracy_ci95"]
         decision_rows.append([method, _pct(s["decision_exact_accuracy"]), f"{_pct(ci[0])}–{_pct(ci[1])}", _num(s["decision_macro_f1"]), _num(s["review_precision"]), _num(s["review_recall"]), _num(s["review_f1"])])
         evidence_rows.append([method, _num(s["citation_precision"]), _num(s["policy_ref_recall"]), _num(s["evidence_faithfulness"]), _num(s["unsupported_claim_rate"])])
-        governance_rows.append([method, _num(s["audit_completeness"]), _num(s["traceability_score"]), _num(s["governance_quality_score"]), _num(s["governance_readiness_index"]), _num(s["latency_seconds_mean"])])
+        governance_rows.append([method, _num(s["common_trace_completeness"]), _num(s["audit_completeness"]), _num(s["traceability_score"]), _num(s["governance_quality_score"]), _num(s["governance_readiness_index"]), _num(s["latency_seconds_mean"])])
 
     sensitivity_rows = []
     if sensitivity:
@@ -80,7 +80,7 @@ def generate_report(result_dir: Path, rows: list[dict], traces: list[dict], fail
 <h2>Evaluation provenance</h2>{_table(['Field','Value'], protocol_rows)}<p>{html.escape(str(protocol.get('claim_guidance','')))}</p>
 <h2>Primary: decision and human-review performance</h2><p>These metrics do not reward audit fields or Policy-as-Skill-specific metadata.</p>{_table(['Method','Exact decision accuracy','95% bootstrap CI','Decision macro-F1','Review precision','Review recall','Review F1'], decision_rows)}
 <h2>Evidence grounding</h2>{_table(['Method','Citation precision','Policy-ref recall','Evidence faithfulness','Unsupported claim rate'], evidence_rows)}
-<h2>Governance and efficiency</h2><p>The governance-readiness index is retained as a secondary diagnostic, not as a synonym for decision accuracy.</p>{_table(['Method','Audit completeness','Traceability','Governance quality','Governance-readiness index','Mean latency (s)'], governance_rows)}
+<h2>Governance and efficiency</h2><p><b>Common trace completeness</b> uses only a method-neutral envelope that every method can emit. Native audit completeness and the governance-readiness index are reported separately as architecture capabilities, not as task accuracy.</p>{_table(['Method','Common trace completeness','Native audit completeness','Traceability','Governance quality','Governance-readiness index','Mean latency (s)'], governance_rows)}
 <h2>Composite-weight sensitivity</h2><p>Ranks are recomputed over a simplex of decision/evidence/governance/answer-similarity weights.</p>{_table(['Method','Share ranked first','Mean rank','Rank std.'], sensitivity_rows) if sensitivity_rows else '<p>Not computed.</p>'}
 <h2>Human annotation agreement</h2>{_table(['Field','Value'], annotation_rows)}<p>If agreement is unavailable, the report does not claim completed independent human validation.</p>
 <h2>Hardware/system profile</h2><pre>{html.escape(json.dumps(system_profile or {}, indent=2, ensure_ascii=False))}</pre>
