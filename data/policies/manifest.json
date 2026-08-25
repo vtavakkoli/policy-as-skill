@@ -1,0 +1,19 @@
+{
+  "corpus_name": "Policy-as-Skill research policy fixtures",
+  "document_count": 11,
+  "external_validity_status": "not independently validated against a production public-sector or enterprise corpus",
+  "usage": "benchmarking architecture, retrieval, governance controls, and auditability; not legal advice",
+  "documents": [
+    {"file": "city_data_protection_policy.md", "domain": "data_protection_privacy", "provenance": "de-identified synthetic/real-world-inspired research fixture"},
+    {"file": "cloud_procurement_policy.md", "domain": "procurement_cloud", "provenance": "de-identified synthetic/real-world-inspired research fixture"},
+    {"file": "cybersecurity_access_control_policy.md", "domain": "cybersecurity_access_control", "provenance": "de-identified synthetic/real-world-inspired research fixture"},
+    {"file": "eu_ai_act_sample.md", "domain": "ai_governance", "provenance": "illustrative research summary; not an authoritative legal text"},
+    {"file": "hr_workplace_ai_policy.md", "domain": "hr_workplace_ai", "provenance": "de-identified synthetic/real-world-inspired research fixture"},
+    {"file": "internal_department_policy_sample.md", "domain": "internal_governance", "provenance": "synthetic research fixture"},
+    {"file": "model_governance_sample.md", "domain": "model_governance", "provenance": "synthetic research fixture"},
+    {"file": "pilot_policy_v1.md", "domain": "policy_update", "provenance": "synthetic versioned research fixture"},
+    {"file": "pilot_policy_v2.md", "domain": "policy_update", "provenance": "synthetic versioned research fixture"},
+    {"file": "public_sector_case_policy.md", "domain": "public_sector_case_study", "provenance": "de-identified synthetic/real-world-inspired research fixture"},
+    {"file": "public_sector_guideline_sample.md", "domain": "public_sector_guidance", "provenance": "synthetic research fixture"}
+  ]
+}
