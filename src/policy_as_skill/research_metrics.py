@@ -11,6 +11,21 @@ from .evaluators import evaluate as _legacy_evaluate
 from .evaluators import expected_review as _legacy_expected_review
 
 DECISION_LABELS = ("allowed", "not_allowed", "conditional", "needs_review", "unknown")
+COMMON_TRACE_FIELDS = (
+    "timestamp", "task_id", "method", "question", "answer", "decision",
+    "human_review_required", "confidence", "evidence", "citations", "latency_seconds",
+)
+
+
+def common_trace_completeness(trace: dict) -> float:
+    """Method-neutral observability score using fields every method can emit."""
+    present = 0
+    for field in COMMON_TRACE_FIELDS:
+        if field in {"human_review_required", "latency_seconds"}:
+            present += 1 if field in trace and trace.get(field) is not None else 0
+        else:
+            present += 1 if trace.get(field) not in (None, "") else 0
+    return present / len(COMMON_TRACE_FIELDS)
 
 
 def evaluate(task, trace: dict, manual_annotations: dict | None = None) -> dict:
@@ -27,6 +42,7 @@ def evaluate(task, trace: dict, manual_annotations: dict | None = None) -> dict:
     base["predicted_human_review"] = predicted_review
     base["review_exact_match"] = 1.0 if predicted_review == expected_review else 0.0
     base["decision_agreement_graded"] = float(base.get("decision_accuracy", 0.0))
+    base["common_trace_completeness"] = common_trace_completeness(trace)
     return base
 
 
@@ -117,6 +133,7 @@ def method_summary(rows: list[dict], *, seed: int = 7, bootstrap_iterations: int
             "policy_ref_recall": mean(float(r.get("policy_ref_recall", 0.0)) for r in mr),
             "evidence_faithfulness": mean(float(r.get("evidence_faithfulness", 0.0)) for r in mr),
             "unsupported_claim_rate": mean(float(r.get("unsupported_claim_rate", 0.0)) for r in mr),
+            "common_trace_completeness": mean(float(r.get("common_trace_completeness", 0.0)) for r in mr),
             "audit_completeness": mean(float(r.get("audit_completeness", 0.0)) for r in mr),
             "traceability_score": mean(float(r.get("traceability_score", 0.0)) for r in mr),
             "governance_quality_score": mean(float(r.get("governance_quality_score", 0.0)) for r in mr),
