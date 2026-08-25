@@ -21,20 +21,22 @@ class Config:
     healthcheck_seconds: float = float(os.getenv("OLLAMA_HEALTHCHECK_SECONDS", "2"))
     ollama_enabled: bool = _bool_env("OLLAMA_ENABLED", True)
     seed: int = int(os.getenv("SEED", "7"))
-    max_tasks: int = int(os.getenv("MAX_TASKS", "0"))  # 0 means all curated tasks in data/tasks
+    max_tasks: int = int(os.getenv("MAX_TASKS", "0"))
     top_k: int = int(os.getenv("TOP_K", "5"))
     manual_citation_annotations_path: str = os.getenv("MANUAL_CITATION_ANNOTATIONS_PATH", "data/annotations/manual_citation_faithfulness.csv")
     bootstrap_iterations: int = int(os.getenv("BOOTSTRAP_ITERATIONS", "1000"))
+    evaluation_split: str = os.getenv("EVALUATION_SPLIT", "development")
+    benchmark_path: str = os.getenv("BENCHMARK_PATH", "data/tasks/benchmark_tasks.jsonl")
+    benchmark_manifest_path: str = os.getenv("BENCHMARK_MANIFEST_PATH", "data/tasks/development_manifest.json")
+    frozen_evaluation: bool = _bool_env("FROZEN_EVALUATION", False)
+    sensitivity_step: float = float(os.getenv("SENSITIVITY_STEP", "0.1"))
     methods: str = os.getenv(
         "METHODS",
-        "Direct LLM,LLM,Keyword Search,Standard RAG,Hybrid RAG,Hybrid RAG + Reranker,LLM + RAG,Policy-as-Prompt,Structured Policy-as-Prompt,Policy-as-Skill No Audit,Policy-as-Skill",
+        "Direct LLM,LLM,Keyword Search,Standard RAG,Hybrid RAG,Hybrid RAG + Reranker,LLM + RAG,Policy-as-Prompt,Structured Policy-as-Prompt,Policy-as-Skill Retrieval,Policy-as-Skill + Controller,Policy-as-Skill + Audit,Policy-as-Skill",
     )
 
     def method_list(self) -> list[str]:
-        aliases = {
-            "Commercial LLM": "LLM",
-            "Commercial LLM + RAG": "LLM + RAG",
-        }
+        aliases = {"Commercial LLM": "LLM", "Commercial LLM + RAG": "LLM + RAG", "Policy-as-Skill No Audit": "Policy-as-Skill + Controller"}
         methods: list[str] = []
         seen: set[str] = set()
         for item in self.methods.split(","):
@@ -43,3 +45,7 @@ class Config:
                 methods.append(method)
                 seen.add(method)
         return methods
+
+    def resolve_path(self, value: str) -> Path:
+        path = Path(value)
+        return path if path.is_absolute() else self.root / path
